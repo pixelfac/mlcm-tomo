@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <utility>
+#include <cmath>
 
 using namespace std;
 
@@ -21,6 +22,15 @@ public:
     int numDetectors; //number of equal-sized detectors on detector panel.
 
     Subject subject;
+
+    //rotates a 2D vector, coord, by degrees (in degrees, not radians)
+    // RETURN: rotated vector
+    pair<double, double> rotate(pair<double, double> coord, double degrees) {
+        double radians = degrees*3.14159/180;
+        double sinTheta = sin(radians);
+        double cosTheta = cos(radians);
+        return pair<double, double>(coord.first * cosTheta - coord.second * sinTheta, coord.first * sinTheta + coord.second * cosTheta);
+    }
 
     //returns a coordinate pair for the position of the source, factoring in the rotation from the current view
     pair<double, double> GetCurrentSourcePosition(int viewNum) {
