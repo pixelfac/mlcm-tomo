@@ -32,6 +32,11 @@ public:
         return pair<double, double>(coord.first * cosTheta - coord.second * sinTheta, coord.first * sinTheta + coord.second * cosTheta);
     }
 
+    //computes dot product of input 2D vectors
+    double dot(pair<double, double> v1, pair<double, double> v2) {
+        return v1.first * v2.first + v1.second * v2.second;
+    }
+
     //returns a coordinate pair for the position of the source, factoring in the rotation from the current view
     pair<double, double> GetCurrentSourcePosition(int viewNum) {
         pair<double, double> initialPosition(0.0, sourceDist);
