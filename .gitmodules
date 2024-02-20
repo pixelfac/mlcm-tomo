@@ -1,0 +1,3 @@
+[submodule "TIGRE"]
+	path = TIGRE
+	url = https://github.com/CERN/TIGRE.git
