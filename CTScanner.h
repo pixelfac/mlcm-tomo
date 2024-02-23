@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <utility>
 
-#include "Subject.h"
 #include "VectorUtils.h"
 
 using namespace std;
@@ -9,12 +8,15 @@ using namespace std;
 class CTScanner {
 public:
     int views; //number of views, spaced equally around the subject (e.g. 36 views is one every 10 degrees)
-    double sourceDist; //distance from source ray emitter to center of subject. MUST be greater than subject diagonal
-    double detectorDist; //distance from center detector to center of subject. MUST be greater than subject diagonal
+    double sourceDist; //distance from source ray emitter to center of subject. Subject diagonal is sqrt(2)
+    double detectorDist; //distance from center detector to center of subject. Subject diagonal is sqrt(2)
     double detectorPanelWidth; //total width of entire detector panel
     int numDetectors; //number of equal-sized detectors on detector panel.
 
-    Subject subject;
+    // subject is a square sized 2x2 units. These units are the same as determining the source and detector distance.
+    // for simplicity and comparison, we are only working with square imaging tasks
+    // The diagonal from the subject to it's furthest corner is sqrt(2)
+    int subjectResolution;  // how many pixels each dimension of the subject should be partitioned into
 
     //returns a coordinate pair for the position of the source, factoring in the rotation from the current view
     pair<double, double> GetCurrentSourcePosition(int viewNum) {
@@ -59,5 +61,7 @@ public:
 
         //checking for overlap and pixel area
         // see "Fast and accurate computation of system matrix for area integral model-based algebraic reconstruction technique" in Slack
+        double pixelSize = 1.0 / subjectResolution;
+
     }
 };
