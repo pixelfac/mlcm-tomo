@@ -73,7 +73,47 @@ public:
 /*
     if Line vertical
 
+        c = x intercept of line, in units of pixels
+        w_top = height of intersect of left wall, from bottom (in pixels) = c + D
+        i = 0
+        j = column index = n - 1 - floor(w_top/delta)
+        d = w_top - j
+        num = 0;
+        k = i*n + j
+
+        vector<int> index // stores indices, in order, of the pixels that our ray intersects
+        vector<double> area // stores the areas, in order, of the pixels that our ray intersects
+        //each value in area corresponds to the pixel at the same location in index
+
+        for (; i < n; i++) {
+            index[num] = k
+            k += 1
+            area[num] = d*delta
+            num += 1
+        }
+        return num
+
     if line horizontal
+
+        b = y-intercept of line, in units of pixels
+        h_left = height of intersect of left wall, from bottom (in pixels) = b + D
+        i = row index = n - 1 - floor(h_left/delta)
+        j = 0
+        d = h_left - i
+        num = 0;
+        k = i*n + j
+
+        vector<int> index // stores indices, in order, of the pixels that our ray intersects
+        vector<double> area // stores the areas, in order, of the pixels that our ray intersects
+        //each value in area corresponds to the pixel at the same location in index
+
+        for (; j < n; j++) {
+            index[num] = k
+            k += 1
+            area[num] = d*delta
+            num += 1
+        }
+        return num
     
     if line slope up
         if m<=1
@@ -206,6 +246,11 @@ public:
             }
         }
         return num
+
+
+        // for m < 0: repeat the above m > 0 case but anything involving j and k is switched from j increasing to approach n, to j decreasing to approach 0
+
+
         */
     }
 };
