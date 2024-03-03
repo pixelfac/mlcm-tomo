@@ -65,9 +65,11 @@ public:
         double pixelSize = 1.0 / subjectResolution;
 
         // from the aforementioned paper:
-        // S1 = (2d - slope*delta)*delta/2, where delta is the width of each pixel = 1.0/subjectResolution
-        // S3 = delta^2 - (slope*delta - d)^2/2m
-        //                   S4 = d^2/2m  
+        // m = slope
+        // delta is the width of each pixel = 1.0/subjectResolution
+        // S1 = (2d - m*delta)*delta/2
+        // S3 = delta^2 - (m*delta - d)^2/2m
+        // S4 = d^2/2m  
 
         // First pixel intersected by a ray:
         // n = pixels in each row/column
@@ -134,3 +136,27 @@ public:
        //There also needs to be consideration for if the ray is horizontal, perhaps
     }
 };
+
+/*
+computeFanIntersections - calls computeLineIntersections for both lines in the fan beam
+    computeLineIntersections - what pixels each line intersects
+        Special Cases: if Line vertical/horizontal
+        if line slope up
+            if line-left enters left wall
+            else line-left enters bottom wall
+
+            march along until exit
+
+            if line-right exits right wall
+            else line-right exits top wall
+
+        else line slope down
+            if line-right enters right wall
+            else line-right enters bottom wall
+
+            march along until exit
+
+            if line-left exits left wall
+            else line-left exits top wall
+
+*/
