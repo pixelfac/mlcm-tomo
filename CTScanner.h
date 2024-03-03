@@ -102,8 +102,8 @@ public:
     // from the aforementioned paper:
     // delta = the width of each square pixel (1/subjectResolution), but for our uses, we leave it as *1* to reduce floating pt error
     // S1 = (2d - m*delta)*delta/2
-    // S3 = delta^2 - (m*delta - d)^2/2m
-    // S4 = d^2/2m
+    // S3 = delta^2 - (m*delta - d)^2/2*m
+    // S4 = d^2/2*m
     
 */
 
@@ -116,9 +116,9 @@ public:
         // c = x intercept of line, in units of pixels
         // D = radius of subject, which is a 1x1 square, so D = 0.5, but this is on the units of pixels, not the whole area, so 0.5 * subjectResolution
 
-        // if -1 > m > 1 ; see pg4
+        //TODO if -1 > m > 1 ; see pg4
 
-        
+        // find starting points for  
         // if m > 0
 
         // h_left = height of intersect of left wall, from bottom (in pixels) = -m*D + b + D
@@ -129,7 +129,7 @@ public:
         //     j = 0
         //     d = h_left - i
         //   else
-        //     i = 0
+        //     i = n-1
         //     j = column index = n - 1 - floor(w_bot/delta)
         //     d = w_bot - j
 
@@ -143,7 +143,7 @@ public:
         //     j = 0
         //     d = h_right - i
         //   else
-        //     i = 0
+        //     i = n-1
         //     j = column index = n - 1 - floor(w_bot/delta)
         //     d = w_bot - j
         
@@ -154,9 +154,19 @@ public:
         /*
         vector<int> index // stores indices, in order, of the pixels that our ray intersects
         vector<double> area // stores the areas, in order, of the pixels that our ray intersects
-            //each value in area corresponds to the pixel at the same location in index
+        //each value in area corresponds to the pixel at the same location in index
 
         num = 0 //counter for number of pixels the ray intersects
+
+        // case for m > 0
+
+        if i == n - 1    // if start is bottom wall
+            d -= delta
+            index[num] = k
+            k += 1
+            area[num] = S4
+            num += 1
+            j += 1
 
         while i >= 0 and j < n {
             d += m*delta
@@ -170,7 +180,7 @@ public:
                 if i >= 0 { //while not run out of horizontal room yet
                     index[num] = k
                     k += 1
-                    area = S4
+                    area[num] = S4
                     num += 1
                     j += 1
                 }
@@ -197,9 +207,5 @@ public:
         }
         return num
         */
-
-       //NOTES:
-       // This alg works when the ray exits a vertical boundary of the image. (see fig 2A) 
-       // It may need to be modified according to the paragraphs after the algorithm to handle the case when the line exits a horizontal boundary
     }
 };
