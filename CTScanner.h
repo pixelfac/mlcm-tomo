@@ -198,7 +198,7 @@ public:
 
         num = 0 //counter for number of pixels the ray intersects
 
-        // case for m > 0
+        // case for 0 < m < 1
 
         if i == n - 1    // if start is bottom wall
             d -= delta
@@ -213,16 +213,16 @@ public:
             if d > delta {
                 d -= delta
                 index[num] = k
-                k -= n
                 area[num] = S3
                 num += 1
                 i -= 1
+                k -= n
                 if i >= 0 { //while not run out of horizontal room yet
                     index[num] = k
-                    k += 1
                     area[num] = S4
                     num += 1
                     j += 1
+                    k += 1
                 }
                 else {
                     return num
@@ -230,25 +230,30 @@ public:
             }
             else if d < delta {
                 index[num] = k
-                k += 1
                 area[num] = S1
                 num += 1
                 j += 1
+                k += 1
             }
             else {
                 d = 0
                 index[num] = k
-                k = k - n + 1
                 area[num] = S1
                 j += 1
                 i -= 1
+                k = k - n + 1
                 num += 1
             }
         }
         return num
 
 
-        // for m < 0: repeat the above m > 0 case but anything involving j and k is switched from j increasing to approach n, to j decreasing to approach 0
+        // for -1 < m < 0: repeat the above 0 < m < 1 case but anything involving j and k is switched from j increasing to approach n, to j decreasing to approach 0
+
+        // NOT SURE, NEEDS TESTING
+        // for m > 1: repeat above 0 < m < 1 case, but inverse slope to m = 1/m, switch b<=>c, still use old m,b,c to determine i,j 
+
+        // for m < -1: repeat above -1 < m < 0 case, but inverse slope to m = 1/m, switch b<=>c, still use old m,b,c to determine i,j
 
 
         */
