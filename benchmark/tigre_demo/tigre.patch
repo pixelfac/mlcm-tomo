@@ -1,0 +1,45 @@
+diff --git a/Common/CUDA/Siddon_projection.cu b/Common/CUDA/Siddon_projection.cu
+index f10b898..0551f8b 100644
+--- a/Common/CUDA/Siddon_projection.cu
++++ b/Common/CUDA/Siddon_projection.cu
+@@ -54,6 +54,10 @@
+ #include "TIGRE_common.hpp"
+ #include <math.h>
+ 
++// CUSTOM INCLDUE FOR BENCHMARK
++#include <chrono>
++#include <iostream>
++
+ #define cudaCheckErrors(msg) \
+ do { \
+         cudaError_t __err = cudaGetLastError(); \
+@@ -275,6 +279,8 @@ int siddon_ray_projection(float* img, Geometry geo, float** result,float const *
+     if (deviceCount == 0) {
+         mexErrMsgIdAndTxt("Ax:Siddon_projection:GPUselect","There are no available device(s) that support CUDA\n");
+     }
++
++
+     //
+     // CODE assumes
+     // 1.-All available devices are usable by this code
+@@ -379,6 +385,7 @@ int siddon_ray_projection(float* img, Geometry geo, float** result,float const *
+     cudaTextureObject_t *texImg = new cudaTextureObject_t[deviceCount];
+     cudaArray **d_cuArrTex = new cudaArray*[deviceCount];
+     
++    auto t1 = std::chrono::high_resolution_clock::now();
+     for (unsigned int sp=0;sp<splits;sp++){
+         
+         // Create texture objects for all GPUs
+@@ -541,6 +548,12 @@ int siddon_ray_projection(float* img, Geometry geo, float** result,float const *
+         cudaDeviceSynchronize();
+     } // End image split loop.
+     
++    auto t2 = std::chrono::high_resolution_clock::now();
++    /* Getting number of milliseconds as a double. */
++    std::chrono::duration<double, std::milli> ms_double = t2 - t1;
++    std::cout << ms_double.count() << "ms\n";
++
++
+     cudaCheckErrors("Main loop  fail");
+     ///////////////////////////////////////////////////////////////////////
+     ///////////////////////////////////////////////////////////////////////

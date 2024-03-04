@@ -1,3 +1,6 @@
-[submodule "TIGRE"]
-	path = TIGRE
+[submodule "toolkit_airtools"]
+	path = toolkit_airtools
+	url = https://github.com/jakobsj/AIRToolsII.git
+[submodule "toolkit_tigre"]
+	path = toolkit_tigre
 	url = https://github.com/CERN/TIGRE.git
