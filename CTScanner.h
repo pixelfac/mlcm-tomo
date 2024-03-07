@@ -347,7 +347,7 @@ public:
 
                 // Determine whether line-right enters the right wall or bottom wall
                 // This depends on the y-intercept of the line.
-                double h_right = 1 * slope * D + b + D; // height of intersect of left wall, from bottom
+                double h_right = slope * D + b + D; // height of intersect of left wall, from bottom
 
                 int i, j;
                 double d;
@@ -401,7 +401,7 @@ public:
                     else if (d < delta)
                     {
                         index.push_back(k);
-                        area.push_back((delta - d) * delta / 2);
+                        area.push_back((2 * d - slope * delta) * delta / 2);
                         num++;
                         j--;
                         k--;
@@ -410,7 +410,7 @@ public:
                     {
                         d = 0;
                         index.push_back(k);
-                        area.push_back(delta * delta / 2);
+                        area.push_back((2 * d - slope * delta) * delta / 2);
                         j--;
                         i--;
                         k = k - subjectResolution - 1;
