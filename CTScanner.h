@@ -6,123 +6,125 @@
 
 using namespace std;
 
-class CTScanner {
+class CTScanner
+{
 public:
-    int views; //number of views, spaced equally around the subject (e.g. 36 views is one every 10 degrees)
-    double sourceDist; //distance from source ray emitter to center of subject. Subject diagonal is sqrt(2)/2
-    double detectorDist; //distance from center detector to center of subject. Subject diagonal is sqrt(2)/2
-    double detectorPanelWidth; //total width of entire detector panel
-    int numDetectors; //number of equal-sized detectors on detector panel.
+    int views;                 // number of views, spaced equally around the subject (e.g. 36 views is one every 10 degrees)
+    double sourceDist;         // distance from source ray emitter to center of subject. Subject diagonal is sqrt(2)/2
+    double detectorDist;       // distance from center detector to center of subject. Subject diagonal is sqrt(2)/2
+    double detectorPanelWidth; // total width of entire detector panel
+    int numDetectors;          // number of equal-sized detectors on detector panel.
     double pixelSize;
 
     // subject is a square sized 1x1 units, centered at the origin, so bounds are (-0.5, 0.5) in both axes.
     // for simplicity and comparison, we are only working with square imaging tasks
     // These units are the same as determining the source and detector distance.
     // The diagonal from the subject to it's furthest corner is sqrt(2)/2
-    int subjectResolution;  // how many pixels each dimension of the subject should be partitioned into
+    int subjectResolution; // how many pixels each dimension of the subject should be partitioned into
 
-    //returns a coordinate pair for the position of the source, factoring in the rotation from the current view
-    pair<double, double> GetCurrentSourcePosition(int viewNum) {
+    // returns a coordinate pair for the position of the source, factoring in the rotation from the current view
+    pair<double, double> GetCurrentSourcePosition(int viewNum)
+    {
         pair<double, double> initialPosition(0.0, sourceDist);
         // if viewNum == 0, then source has not moved from initial position, (0, sourceDist)
         double degreesRotated = viewNum * (360.0 / views);
 
-        //TODO how to make rotation matrix to rotate a vector by a set number of degrees/radians?
+        // TODO how to make rotation matrix to rotate a vector by a set number of degrees/radians?
         return rotate(initialPosition, degreesRotated);
     }
 
-    //returns a pair of coordinates for the position of the detector, factoring in the rotation from the current view and position along detector panel
-    // INPUT: detectorNum is 0-indexed, so #0 means left side of detector
-    // RETURN: first pair is leftmost coord, second pair is right side of detector
-    pair<pair<double, double>, pair<double, double>> GetCurrentDetectorPosition(int viewNum, int detectorNum) {
-        pair<double, double> detectorLeftSide(0.0, detectorDist);  //leftmost range of this detector pixel
-        pair<double, double> detectorRightSide(0.0, detectorDist); //rightmost range of this detector pixel
+    // returns a pair of coordinates for the position of the detector, factoring in the rotation from the current view and position along detector panel
+    //  INPUT: detectorNum is 0-indexed, so #0 means left side of detector
+    //  RETURN: first pair is leftmost coord, second pair is right side of detector
+    pair<pair<double, double>, pair<double, double>> GetCurrentDetectorPosition(int viewNum, int detectorNum)
+    {
+        pair<double, double> detectorLeftSide(0.0, detectorDist);  // leftmost range of this detector pixel
+        pair<double, double> detectorRightSide(0.0, detectorDist); // rightmost range of this detector pixel
 
-        double detectorWidth = detectorPanelWidth / numDetectors; //width of each individual detector pixel
+        double detectorWidth = detectorPanelWidth / numDetectors; // width of each individual detector pixel
         detectorLeftSide.first = (detectorWidth * detectorNum) - (detectorPanelWidth / 2);
         detectorRightSide.first = detectorLeftSide.first + detectorWidth;
-        
+
         // if viewNum == 0, then source has not moved from initial position, (0, detectorDist)
         double degreesRotated = viewNum * (360.0 / views);
 
-        //TODO how to make rotation matrix to rotate a vector by a set number of degrees/radians?
+        // TODO how to make rotation matrix to rotate a vector by a set number of degrees/radians?
         detectorLeftSide = rotate(detectorLeftSide, degreesRotated);
         detectorRightSide = rotate(detectorRightSide, degreesRotated);
 
         return pair<pair<double, double>, pair<double, double>>(detectorLeftSide, detectorRightSide);
     }
 
-    //simulate a fan of photons from source, through subject, and hitting a specific detector
-    // viewNum is which 
-    // detectorNum is which detector on the panel this fan beam is projected to
-    // calls computeLineIntersections for both lines in the fan beam
-    // combines area to get complete list of pixels with their areas
-    void computeFanIntersections(int viewNum, int detectorNum) {
-        //compute fanbeam triangle using source position, detector panel position, and which detector on the panel is receiving
+    // simulate a fan of photons from source, through subject, and hitting a specific detector
+    //  viewNum is which
+    //  detectorNum is which detector on the panel this fan beam is projected to
+    //  calls computeLineIntersections for both lines in the fan beam
+    //  combines area to get complete list of pixels with their areas
+    void computeFanIntersections(int viewNum, int detectorNum)
+    {
+        // compute fanbeam triangle using source position, detector panel position, and which detector on the panel is receiving
         pair<double, double> sourcePosition = GetCurrentSourcePosition(viewNum);
 
         auto detectorPosition = GetCurrentDetectorPosition(viewNum, detectorNum);
 
-        //TODO call computeLineIntersections for both lines
+        // TODO call computeLineIntersections for both lines
 
-        //checking for overlap and pixel area
-        // see "Fast and accurate computation of system matrix for area integral model-based algebraic reconstruction technique" in Slack
-        
-        pixelSize = 1.0 / subjectResolution; //this is delta?
+        // checking for overlap and pixel area
+        //  see "Fast and accurate computation of system matrix for area integral model-based algebraic reconstruction technique" in Slack
+
+        pixelSize = 1.0 / subjectResolution; // this is delta?
     }
 
-    //what pixels each line intersects, always computes pixel area below line, never above
-    void computeLineIntersections(pair<double, double> sourcePos, pair<double, double> detectorPos) {
-    
-        //calculate the slope of the line from the source to the detector using y2 - y1/x2-x1
-        double slope = (detectorPos.second - sourcePos.second)/(detectorPos.first - sourcePos.first);
-        double b = (sourcePos.second - slope*sourcePos.first) * subjectResolution; //y intercept in units of pixels
-        double c = (sourcePos.first - slope*sourcePos.second) * subjectResolution; //x intercept in units of pixels
-        double D = 0.5 * subjectResolution; //half-width/half-height of subject area, in units of pixels
+    // what pixels each line intersects, always computes pixel area below line, never above
+    void computeLineIntersections(pair<double, double> sourcePos, pair<double, double> detectorPos)
+    {
+        // calculate the slope of the line from the source to the detector using y2 - y1/x2-x1
+        double slope = (detectorPos.second - sourcePos.second) / (detectorPos.first - sourcePos.first);
+        double b = (sourcePos.second - slope * sourcePos.first) * subjectResolution; // y intercept in units of pixels
+        double c = (sourcePos.first - slope * sourcePos.second) * subjectResolution; // x intercept in units of pixels
+        double D = 0.5 * subjectResolution;                                          // half-width/half-height of subject area, in units of pixels
         int delta = 1;
         /*
-
-            // from the aforementioned paper:
+            // reference from the aforementioned paper:
             // delta = the width of each square pixel (1/subjectResolution), but for our uses, we leave it as *1* to reduce floating pt error
             // S1 = (2d - m*delta)*delta/2
             // S3 = delta^2 - (m*delta - d)^2/2*m
             // S4 = d^2/2*m
-            
         */
-        
-        if(isinf(slope))  //the line is strictly vertical
+
+        if (isinf(slope)) // the line is strictly vertical
         {
-            /*
-                c = x intercept of line, in units of pixels
-                w_top = height of intersect of left wall, from bottom (in pixels) = c + D
-                i = 0
-                j = column index = n - 1 - floor(w_top/delta)
-                d = w_top - j
-                num = 0;
-                k = i*n + j
+        /*
+            c = x intercept of line, in units of pixels
+            w_top = height of intersect of left wall, from bottom (in pixels) = c + D
+            i = 0
+            j = column index = n - 1 - floor(w_top/delta)
+            d = w_top - j
+            num = 0;
+            k = i*n + j
 
-                vector<int> index // stores indices, in order, of the pixels that our ray intersects
-                vector<double> area // stores the areas, in order, of the pixels that our ray intersects
-                //each value in area corresponds to the pixel at the same location in index
+            vector<int> index // stores indices, in order, of the pixels that our ray intersects
+            vector<double> area // stores the areas, in order, of the pixels that our ray intersects
+            //each value in area corresponds to the pixel at the same location in index
 
-                for (; i < n; i++) {
-                    index[num] = k
-                    k += 1
-                    area[num] = d*delta
-                    num += 1
-                }
-                return num
-            */
-            double w_top = c + D; //height of the intersect of left wall from bottom
-            int j = subjectResolution - 1 - floor(w_top/delta); //column index
-            double d = w_top - j; //distance
-            int num  = 0; //counter
-            int k = j; // index
+            for (; i < n; i++) {
+                index[num] = k
+                k += 1
+                area[num] = d*delta
+                num += 1
+            }
+            return num
+        */
+            double w_top = c + D;                                 // height of the intersect of left wall from bottom
+            int j = subjectResolution - 1 - floor(w_top / delta); // column index
+            double d = w_top - j;                                 // distance
+            int num = 0;                                          // counter
+            int k = j;                                            // index
 
-            vector<int> index; // stores indices, in order, of the pixels that our ray intersects
+            vector<int> index;   // stores indices, in order, of the pixels that our ray intersects
             vector<double> area; // stores the areas, in order, of the pixels that our ray intersects
 
-            for(int i = 0; i < subjectResolution; i++)
+            for (int i = 0; i < subjectResolution; i++)
             {
                 index.push_back(k);
                 k += 1;
@@ -130,39 +132,39 @@ public:
                 num += 1;
             }
         }
-        else if(slope == 0) //the line is strictly horizontal
+        else if (slope == 0) // the line is strictly horizontal
         {
-            /*
-                 b = y-intercept of line, in units of pixels
-                h_left = height of intersect of left wall, from bottom (in pixels) = b + D
-                i = row index = n - 1 - floor(h_left/delta)
-                j = 0
-                d = h_left - i
-                num = 0;
-                k = i*n + j
+        /*
+                b = y-intercept of line, in units of pixels
+            h_left = height of intersect of left wall, from bottom (in pixels) = b + D
+            i = row index = n - 1 - floor(h_left/delta)
+            j = 0
+            d = h_left - i
+            num = 0;
+            k = i*n + j
 
-                vector<int> index // stores indices, in order, of the pixels that our ray intersects
-                vector<double> area // stores the areas, in order, of the pixels that our ray intersects
-                //each value in area corresponds to the pixel at the same location in index
+            vector<int> index // stores indices, in order, of the pixels that our ray intersects
+            vector<double> area // stores the areas, in order, of the pixels that our ray intersects
+            //each value in area corresponds to the pixel at the same location in index
 
-                for (; j < n; j++) {
-                    index[num] = k
-                    k += 1
-                    area[num] = d*delta
-                    num += 1
-                }
-                return num
-            */
-            double h_left = b + D; // height of intersect of left wall from bottom
+            for (; j < n; j++) {
+                index[num] = k
+                k += 1
+                area[num] = d*delta
+                num += 1
+            }
+            return num
+        */
+            double h_left = b + D;                                 // height of intersect of left wall from bottom
             int i = subjectResolution - 1 - floor(h_left / delta); // row index
-            double d = h_left - i; // distance
-            int num = 0; //Counter for number of pixels the ray intersects
-            int k = i * subjectResolution; // index
+            double d = h_left - i;                                 // distance
+            int num = 0;                                           // Counter for number of pixels the ray intersects
+            int k = i * subjectResolution;                         // index
 
-            vector<int> index; // stores indices, in order, of the pixels that our ray intersects
+            vector<int> index;   // stores indices, in order, of the pixels that our ray intersects
             vector<double> area; // stores the areas, in order, of the pixels that our ray intersects
 
-            for(int j = 0; j < subjectResolution; j++)
+            for (int j = 0; j < subjectResolution; j++)
             {
                 index.push_back(k);
                 k += 1;
@@ -170,126 +172,122 @@ public:
                 num += 1;
             }
         }
-        
-                // First pixel intersected by a ray:
-                // (0,0) is CENTERED TOP LEFT
-                // n = pixels in each row/column
-                // m = slope (it's a ratio, no units needed)
-                // b = y-intercept of line, in units of pixels
-                // c = x intercept of line, in units of pixels
-                // D = radius of subject, which is a 1x1 square, so D = 0.5, but this is on the units of pixels, not the whole area, so 0.5 * subjectResolution
 
-                //TODO if -1 > m > 1
-                // NOT SURE, NEEDS TESTING
-                // for m < -1, m > 1: m=1/m, swap b<=>c, this will yield 
-                // when <increasing/decreasing> <i/j> to <0/n>, invert it to <increasing/decreasing> <j/i> to <n/0>
-                // to convert k out of inverted coordinatesk = k <+/-> <n/1> --> k = k <-/+> <i/n>
-                // k = (n-1-j)*n + (n-1-i)
+        // First pixel intersected by a ray:
+        // (0,0) is CENTERED TOP LEFT
+        // n = pixels in each row/column
+        // m = slope (it's a ratio, no units needed)
+        // b = y-intercept of line, in units of pixels
+        // c = x intercept of line, in units of pixels
+        // D = radius of subject, which is a 1x1 square, so D = 0.5, but this is on the units of pixels, not the whole area, so 0.5 * subjectResolution
 
-                // find starting points for  
-                // if m > 0
+        // TODO if -1 > m > 1
+        //  NOT SURE, NEEDS TESTING
+        //  for m < -1, m > 1: m=1/m, swap b<=>c, this will yield
+        //  when <increasing/decreasing> <i/j> to <0/n>, invert it to <increasing/decreasing> <j/i> to <n/0>
+        //  to convert k out of inverted coordinatesk = k <+/-> <n/1> --> k = k <-/+> <i/n>
+        //  k = (n-1-j)*n + (n-1-i)
 
-                // h_left = height of intersect of left wall, from bottom (in pixels) = -m*D + b + D
-                // w_bot = width of intersect of bottom wall from left (in pixels) = -(1/m)*D + c + D
+        // find starting points for
+        // if m > 0
 
-                //   if 0 < h_left < n
-                //     i = row index = n - 1 - floor(h_left/delta)
-                //     j = 0
-                //     d = h_left - i
-                //   else
-                //     i = n-1
-                //     j = column index = n - 1 - floor(w_bot/delta)
-                //     d = w_bot - j
+        // h_left = height of intersect of left wall, from bottom (in pixels) = -m*D + b + D
+        // w_bot = width of intersect of bottom wall from left (in pixels) = -(1/m)*D + c + D
 
-                // else m < 0
+        //   if 0 < h_left < n
+        //     i = row index = n - 1 - floor(h_left/delta)
+        //     j = 0
+        //     d = h_left - i
+        //   else
+        //     i = n-1
+        //     j = column index = n - 1 - floor(w_bot/delta)
+        //     d = w_bot - j
 
-                // h_right = height of intersect of right wall, from bottom (in pixels) = m*D + b + D
-                // w_bot = width of intersect of bottom wall from left (in pixels) = (1/m)*D + c + D
+        // else m < 0
 
-                //   if 0 < h_right < n
-                //     i = row index = n - 1 - floor(h_right/delta)
-                //     j = 0
-                //     d = h_right - i
-                //   else
-                //     i = n-1
-                //     j = column index = n - 1 - floor(w_bot/delta)
-                //     d = w_bot - j
-                
-                // k = i*n + j
+        // h_right = height of intersect of right wall, from bottom (in pixels) = m*D + b + D
+        // w_bot = width of intersect of bottom wall from left (in pixels) = (1/m)*D + c + D
 
-                //"pixel traversing and line-pixel intersection areas calculation algorithm"
-                // OUTPUT: # of pixels intersected by line, their indices, and the area *under* the ray for that pixel
-                /*
-                vector<int> index // stores indices, in order, of the pixels that our ray intersects
-                vector<double> area // stores the areas, in order, of the pixels that our ray intersects
-                //each value in area corresponds to the pixel at the same location in index
+        //   if 0 < h_right < n
+        //     i = row index = n - 1 - floor(h_right/delta)
+        //     j = 0
+        //     d = h_right - i
+        //   else
+        //     i = n-1
+        //     j = column index = n - 1 - floor(w_bot/delta)
+        //     d = w_bot - j
 
-                num = 0 //counter for number of pixels the ray intersects
+        // k = i*n + j
 
-                // case for 0 < m < 1
+        //"pixel traversing and line-pixel intersection areas calculation algorithm"
+        // OUTPUT: # of pixels intersected by line, their indices, and the area *under* the ray for that pixel
+        /*
+        vector<int> index // stores indices, in order, of the pixels that our ray intersects
+        vector<double> area // stores the areas, in order, of the pixels that our ray intersects
+        //each value in area corresponds to the pixel at the same location in index
 
-                if i == n - 1    // if start is bottom wall
-                    d -= delta
+        num = 0 //counter for number of pixels the ray intersects
+
+        // case for 0 < m < 1
+
+        if i == n - 1    // if start is bottom wall
+            d -= delta
+            index[num] = k
+            k += 1
+            area[num] = S4
+            num += 1
+            j += 1
+
+        while i >= 0 and j < n {
+            d += m*delta
+            if d > delta {
+                d -= delta
+                index[num] = k
+                area[num] = S3
+                num += 1
+                i -= 1
+                k -= n
+                if i >= 0 { //while not run out of horizontal room yet
                     index[num] = k
-                    k += 1
                     area[num] = S4
                     num += 1
                     j += 1
-
-                while i >= 0 and j < n {
-                    d += m*delta
-                    if d > delta {
-                        d -= delta
-                        index[num] = k
-                        area[num] = S3
-                        num += 1
-                        i -= 1
-                        k -= n
-                        if i >= 0 { //while not run out of horizontal room yet
-                            index[num] = k
-                            area[num] = S4
-                            num += 1
-                            j += 1
-                            k += 1
-                        }
-                        else {
-                            return num
-                        }
-                    }
-                    else if d < delta {
-                        index[num] = k
-                        area[num] = S1
-                        num += 1
-                        j += 1
-                        k += 1
-                    }
-                    else {
-                        d = 0
-                        index[num] = k
-                        area[num] = S1
-                        j += 1
-                        i -= 1
-                        k = k - n + 1
-                        num += 1
-                    }
+                    k += 1
                 }
-                return num
+                else {
+                    return num
+                }
+            }
+            else if d < delta {
+                index[num] = k
+                area[num] = S1
+                num += 1
+                j += 1
+                k += 1
+            }
+            else {
+                d = 0
+                index[num] = k
+                area[num] = S1
+                j += 1
+                i -= 1
+                k = k - n + 1
+                num += 1
+            }
+        }
+        return num
 
 
-                // for -1 < m < 0: repeat the above 0 < m < 1 case but anything involving j and k is switched from j increasing to approach n, to j decreasing to approach 0
+        // for -1 < m < 0: repeat the above 0 < m < 1 case but anything involving j and k is switched from j increasing to approach n, to j decreasing to approach 0
 
-                // NOT SURE, NEEDS TESTING
-                // for m > 1: repeat above 0 < m < 1 case, but inverse slope to m = 1/m, switch b<=>c, still use old m,b,c to determine i,j 
+        */
 
-                // for m < -1: repeat above -1 < m < 0 case, but inverse slope to m = 1/m, switch b<=>c, still use old m,b,c to determine i,j
-
-
-                */
-
-        else if (abs(slope) <= 1) { // -1 <= slope <= 1
-            if (slope > 0) {
+        else if (abs(slope) <= 1)
+        { // -1 <= slope <= 1
+            if (slope > 0)
+            {
                 // Calculate the height of intersect of left wall
-                double h_left = (-1*slope * D) + b + D;
+                double h_left = (-1 * slope * D) + b + D;
 
                 // Calculate the width of intersect of bottom wall from left
                 double w_bot = (-(1 / slope) * D) + c + D;
@@ -364,10 +362,11 @@ public:
                     }
                 }
             }
-            else { // slope < 0
+            else
+            { // slope < 0
                 // Determine whether line-left enters the left wall or bottom wall
                 // This depends on the y-intercept of the line.
-                double h_left = -1*slope * D + b + D; // height of intersect of left wall, from bottom
+                double h_left = -1 * slope * D + b + D; // height of intersect of left wall, from bottom
                 int i, j;
                 double d;
                 if (0 < h_left && h_left < subjectResolution)
@@ -436,12 +435,11 @@ public:
         }
         else // abs(slope) > 1
         {
-            if (slope > 0) { // slope > 1
-
+            if (slope > 0)
+            { // slope > 1
             }
             else // slope < -1
             {
-
             }
         }
     }
