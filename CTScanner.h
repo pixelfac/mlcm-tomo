@@ -374,7 +374,7 @@ public:
                 // Traverse along the line until exit
                 
                 int k = i * subjectResolution + j;
-                while (i >= 0 && j < subjectResolution)
+                while (i >= 0 && j >= 0)
                 {
                     d -= slope * delta; //since the line slopes down, reverse up the line
                     if (d > delta)
@@ -403,17 +403,17 @@ public:
                         index.push_back(k);
                         area.push_back((delta - d) * delta / 2);
                         num++;
-                        j++;
-                        k++;
+                        j--;
+                        k--;
                     }
                     else
                     {
                         d = 0;
                         index.push_back(k);
                         area.push_back(delta * delta / 2);
-                        j++;
+                        j--;
                         i--;
-                        k = k - subjectResolution + 1;
+                        k = k - subjectResolution - 1;
                         num++;
                     }
                 }
