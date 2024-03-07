@@ -75,7 +75,7 @@ public:
     void computeLineIntersections(pair<double, double> sourcePos, pair<double, double> detectorPos) {
     
         //calculate the slope of the line from the source to the detector using y2 - y1/x2-x1
-        int slope = (detectorPos.second - sourcePos .second)/(detectorPos.first - sourcePos.first);
+        int slope = (detectorPos.second - sourcePos.second)/(detectorPos.first - sourcePos.first);
         int delta = 1;
         /*
 
@@ -155,7 +155,7 @@ public:
             double h_left = b + 0.5; // height of intersect of left wall from bottom
             int i = subjectResolution - 1 - floor(h_left / delta); // row index
             double d = h_left - i; // distance
-            int num = 0; //COunter for number of pixels the ray intersects
+            int num = 0; //Counter for number of pixels the ray intersects
             int k = i * subjectResolution; // index
 
             vector<int> index; // stores indices, in order, of the pixels that our ray intersects
@@ -178,7 +178,12 @@ public:
                 // c = x intercept of line, in units of pixels
                 // D = radius of subject, which is a 1x1 square, so D = 0.5, but this is on the units of pixels, not the whole area, so 0.5 * subjectResolution
 
-                //TODO if -1 > m > 1 ; see pg4
+                //TODO if -1 > m > 1
+                // NOT SURE, NEEDS TESTING
+                // for m < -1, m > 1: m=1/m, swap b<=>c, this will yield 
+                // when <increasing/decreasing> <i/j> to <0/n>, invert it to <increasing/decreasing> <j/i> to <n/0>
+                // to convert k out of inverted coordinatesk = k <+/-> <n/1> --> k = k <-/+> <i/n>
+                // k = (n-1-j)*n + (n-1-i)
 
                 // find starting points for  
                 // if m > 0
