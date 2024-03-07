@@ -289,7 +289,7 @@ public:
         else if (abs(slope) <= 1) { // -1 <= slope <= 1
             if (slope > 0) {
                 // Calculate the height of intersect of left wall
-                double h_left = (-slope * D) + b + D;
+                double h_left = (-1*slope * D) + b + D;
 
                 // Calculate the width of intersect of bottom wall from left
                 double w_bot = (-(1 / slope) * D) + c + D;
@@ -367,7 +367,7 @@ public:
             else { // slope < 0
                 // Determine whether line-left enters the left wall or bottom wall
                 // This depends on the y-intercept of the line.
-                double h_left = -slope * D + b + D; // height of intersect of left wall, from bottom
+                double h_left = -1*slope * D + b + D; // height of intersect of left wall, from bottom
                 int i, j;
                 double d;
                 if (0 < h_left && h_left < subjectResolution)
