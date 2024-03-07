@@ -89,7 +89,7 @@ public:
             // delta = the width of each square pixel (1/subjectResolution), but for our uses, we leave it as *1* to reduce floating pt error
             // S1 = (2d - m*delta)*delta/2
             // S3 = delta^2 - (m*delta - d)^2/2*m
-            // S4 = d^2/2*m
+            // S4 = d^2/2/m
         */
 
         if (isinf(slope)) // the line is strictly vertical
@@ -173,7 +173,6 @@ public:
             }
         }
 
-        // First pixel intersected by a ray:
         // (0,0) is CENTERED TOP LEFT
         // n = pixels in each row/column
         // m = slope (it's a ratio, no units needed)
@@ -182,41 +181,14 @@ public:
         // D = radius of subject, which is a 1x1 square, so D = 0.5, but this is on the units of pixels, not the whole area, so 0.5 * subjectResolution
 
         // TODO if -1 > m > 1
-        //  NOT SURE, NEEDS TESTING
-        //  for m < -1, m > 1: m=1/m, swap b<=>c, this will yield
-        //  when <increasing/decreasing> <i/j> to <0/n>, invert it to <increasing/decreasing> <j/i> to <n/0>
-        //  to convert k out of inverted coordinatesk = k <+/-> <n/1> --> k = k <-/+> <i/n>
-        //  k = (n-1-j)*n + (n-1-i)
-
-        // find starting points for
-        // if m > 0
+        // NOT SURE, NEEDS TESTING
+        // for m < -1, m > 1: m=1/m, swap b<=>c, this will yield
+        // when <increasing/decreasing> <i/j> to <0/n>, invert it to <increasing/decreasing> <j/i> to <n/0>
+        // to convert k out of inverted coordinatesk = k <+/-> <n/1> --> k = k <-/+> <i/n>
+        // k = (n-1-j)*n + (n-1-i)
 
         // h_left = height of intersect of left wall, from bottom (in pixels) = -m*D + b + D
         // w_bot = width of intersect of bottom wall from left (in pixels) = -(1/m)*D + c + D
-
-        //   if 0 < h_left < n
-        //     i = row index = n - 1 - floor(h_left/delta)
-        //     j = 0
-        //     d = h_left - i
-        //   else
-        //     i = n-1
-        //     j = column index = n - 1 - floor(w_bot/delta)
-        //     d = w_bot - j
-
-        // else m < 0
-
-        // h_right = height of intersect of right wall, from bottom (in pixels) = m*D + b + D
-        // w_bot = width of intersect of bottom wall from left (in pixels) = (1/m)*D + c + D
-
-        //   if 0 < h_right < n
-        //     i = row index = n - 1 - floor(h_right/delta)
-        //     j = 0
-        //     d = h_right - i
-        //   else
-        //     i = n-1
-        //     j = column index = n - 1 - floor(w_bot/delta)
-        //     d = w_bot - j
-
         // k = i*n + j
 
         //"pixel traversing and line-pixel intersection areas calculation algorithm"
@@ -286,6 +258,10 @@ public:
         { // -1 <= slope <= 1
             if (slope > 0)
             {
+                vector<int> index;
+                vector<double> area;
+                int num = 0;
+
                 // Calculate the height of intersect of left wall
                 double h_left = (-1 * slope * D) + b + D;
  
@@ -297,7 +273,7 @@ public:
                 {
                     // Start from the left wall
                     i = subjectResolution - 1 - floor(h_left / delta);
-                    j = 0;
+                    j = 0; // leftmost column
                     d = h_left - floor(h_left / delta);
                 }
                 else
@@ -305,16 +281,17 @@ public:
                     // Start from the bottom wall
                     // Calculate the width of intersect of bottom wall from left
                     double w_bot = (-1 * (1.0f / slope) * D) + c + D;
-                    i = subjectResolution - 1;
+                    i = subjectResolution - 1; // bottom row
                     j = subjectResolution - 1 - floor(w_bot / delta);
-                    d = w_bot - floor(w_bot / delta);
+                    d = slope*(w_bot - floor(w_bot / delta));
+
+                    index.push_back(i*subjectResolution + j);
+                    area.push_back(d*(w_bot - floor(w_bot / delta)));
+                    num += 1;
+                    j += 1;
                 }
 
-                int num = 0;
                 int k = i * subjectResolution + j;
-
-                vector<int> index;
-                vector<double> area;
 
                 // Pixel traversing and line-pixel intersection areas calculation algorithm
                 while (i >= 0 && j < subjectResolution)
@@ -363,33 +340,43 @@ public:
             }
             else
             { // slope < 0
+
+                int num = 0;
+                vector<int> index;
+                vector<double> area;
+
                 // Determine whether line-right enters the right wall or bottom wall
                 // This depends on the y-intercept of the line.
                 double h_right = 1 * slope * D + b + D; // height of intersect of left wall, from bottom
+
                 int i, j;
                 double d;
+
                 if (0 <= h_right && h_right < subjectResolution)
                 {
                     i = subjectResolution - 1 - floor(h_right / delta);
-                    j = 0;
+                    j = 0; // leftmost column
                     d = h_right - floor(h_right / delta);
                 }
                 else
                 {
-                    i = subjectResolution - 1;
                     double w_bot = (-1 * (1.0f / slope) * D) + c + D;
+                    i = subjectResolution - 1; // bottom row
                     j = subjectResolution - 1 - floor(w_bot / delta);
-                    d = 1 - (w_bot - floor(w_bot / delta));
+                    d = slope*(1 - (w_bot - floor(w_bot / delta)));
+
+                    index.push_back(i*subjectResolution + j);
+                    area.push_back(d*(1 - (w_bot - floor(w_bot / delta))));
+                    num += 1;
+                    j -= 1;
                 }
 
                 // Traverse along the line until exit
-                int num = 0;
+                
                 int k = i * subjectResolution + j;
-                vector<int> index;
-                vector<double> area;
                 while (i >= 0 && j < subjectResolution)
                 {
-                    d += slope * delta;
+                    d -= slope * delta; //since the line slopes down, reverse up the line
                     if (d > delta)
                     {
                         d -= delta;
@@ -434,8 +421,8 @@ public:
         }
         else // abs(slope) > 1
         {
-            if (slope > 0)
-            { // slope > 1
+            if (slope > 0) // slope > 1
+            { 
             }
             else // slope < -1
             {
