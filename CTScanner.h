@@ -388,7 +388,7 @@ public:
                         if (i >= 0)
                         {
                             index.push_back(k);
-                            area.push_back(d * delta / 2);
+                            area.push_back(pow(d, 2) / (2 * slope));
                             num++;
                             j++;
                             k++;
