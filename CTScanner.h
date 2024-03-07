@@ -113,7 +113,7 @@ public:
                 }
                 return num
             */
-            double w_top = c + 0.5; //height of the intersect of left wall from bottom
+            double w_top = c + D; //height of the intersect of left wall from bottom
             int j = subjectResolution - 1 - floor(w_top/delta); //column index
             double d = w_top - j; //distance
             int num  = 0; //counter
@@ -153,7 +153,7 @@ public:
                 }
                 return num
             */
-            double h_left = b + 0.5; // height of intersect of left wall from bottom
+            double h_left = b + D; // height of intersect of left wall from bottom
             int i = subjectResolution - 1 - floor(h_left / delta); // row index
             double d = h_left - i; // distance
             int num = 0; //Counter for number of pixels the ray intersects
@@ -289,10 +289,10 @@ public:
         else if (abs(slope) <= 1) { // -1 <= slope <= 1
             if (slope > 0) {
                 // Calculate the height of intersect of left wall
-                double h_left = (-slope * 0.5) + b + 0.5; // D = 0.5
+                double h_left = (-slope * D) + b + D;
 
                 // Calculate the width of intersect of bottom wall from left
-                double w_bot = (-(1 / slope) * 0.5) + c + 0.5; // D = 0.5
+                double w_bot = (-(1 / slope) * D) + c + D;
 
                 int i, j;
                 double d;
@@ -367,8 +367,6 @@ public:
             else { // slope < 0
                 // Determine whether line-left enters the left wall or bottom wall
                 // This depends on the y-intercept of the line.
-                // If b < 0.5, it enters the left wall. Otherwise, it enters the bottom wall.
-                double D = 0.5 * subjectResolution; // Radius of the subject
                 double h_left = -slope * D + b + D; // height of intersect of left wall, from bottom
                 int i, j;
                 double d;
