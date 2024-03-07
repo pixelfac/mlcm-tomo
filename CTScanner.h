@@ -290,13 +290,13 @@ public:
                 double h_left = (-1 * slope * D) + b + D;
 
                 // Calculate the width of intersect of bottom wall from left
-                double w_bot = (-(1 / slope) * D) + c + D;
+                double w_bot = (-1 * (1.0f / slope) * D) + c + D;
 
                 int i, j;
                 double d;
 
                 // Check if h_left is within the range of pixels
-                if (h_left >= 0 && h_left < subjectResolution)
+                if (0 <= h_left && h_left < subjectResolution)
                 {
                     // Start from the left wall
                     i = subjectResolution - 1 - floor(h_left / delta);
@@ -369,7 +369,7 @@ public:
                 double h_left = -1 * slope * D + b + D; // height of intersect of left wall, from bottom
                 int i, j;
                 double d;
-                if (0 < h_left && h_left < subjectResolution)
+                if (0 <= h_left && h_left < subjectResolution)
                 {
                     i = subjectResolution - 1 - floor(h_left / delta);
                     j = 0;
@@ -378,7 +378,7 @@ public:
                 else
                 {
                     i = subjectResolution - 1;
-                    double w_bot = -(1 / slope) * D + sourcePos.first + D; // width of intersect of bottom wall from left
+                    double w_bot = (-1 * (1.0f / slope) * D) + c + D;
                     j = subjectResolution - 1 - floor(w_bot / delta);
                     d = w_bot - j;
                 }
