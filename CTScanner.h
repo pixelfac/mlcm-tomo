@@ -83,7 +83,7 @@ public:
         double b = (sourcePos.second - slope * sourcePos.first) * subjectResolution; // y intercept in units of pixels
         double c = (sourcePos.first - slope * sourcePos.second) * subjectResolution; // x intercept in units of pixels
         double D = 0.5 * subjectResolution;                                          // half-width/half-height of subject area, in units of pixels
-        int delta = 1;
+        double delta = 1;
         /*
             // reference from the aforementioned paper:
             // delta = the width of each square pixel (1/subjectResolution), but for our uses, we leave it as *1* to reduce floating pt error
@@ -288,10 +288,7 @@ public:
             {
                 // Calculate the height of intersect of left wall
                 double h_left = (-1 * slope * D) + b + D;
-
-                // Calculate the width of intersect of bottom wall from left
-                double w_bot = (-1 * (1.0f / slope) * D) + c + D;
-
+ 
                 int i, j;
                 double d;
 
@@ -301,14 +298,16 @@ public:
                     // Start from the left wall
                     i = subjectResolution - 1 - floor(h_left / delta);
                     j = 0;
-                    d = h_left - i * delta;
+                    d = h_left - floor(h_left / delta);
                 }
                 else
                 {
                     // Start from the bottom wall
+                    // Calculate the width of intersect of bottom wall from left
+                    double w_bot = (-1 * (1.0f / slope) * D) + c + D;
                     i = subjectResolution - 1;
                     j = subjectResolution - 1 - floor(w_bot / delta);
-                    d = w_bot - j * delta;
+                    d = w_bot - floor(w_bot / delta);
                 }
 
                 int num = 0;
@@ -364,23 +363,23 @@ public:
             }
             else
             { // slope < 0
-                // Determine whether line-left enters the left wall or bottom wall
+                // Determine whether line-right enters the right wall or bottom wall
                 // This depends on the y-intercept of the line.
-                double h_left = -1 * slope * D + b + D; // height of intersect of left wall, from bottom
+                double h_right = 1 * slope * D + b + D; // height of intersect of left wall, from bottom
                 int i, j;
                 double d;
-                if (0 <= h_left && h_left < subjectResolution)
+                if (0 <= h_right && h_right < subjectResolution)
                 {
-                    i = subjectResolution - 1 - floor(h_left / delta);
+                    i = subjectResolution - 1 - floor(h_right / delta);
                     j = 0;
-                    d = h_left - i;
+                    d = h_right - floor(h_right / delta);
                 }
                 else
                 {
                     i = subjectResolution - 1;
                     double w_bot = (-1 * (1.0f / slope) * D) + c + D;
                     j = subjectResolution - 1 - floor(w_bot / delta);
-                    d = w_bot - j;
+                    d = 1 - (w_bot - floor(w_bot / delta));
                 }
 
                 // Traverse along the line until exit
