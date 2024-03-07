@@ -75,7 +75,9 @@ public:
     void computeLineIntersections(pair<double, double> sourcePos, pair<double, double> detectorPos) {
     
         //calculate the slope of the line from the source to the detector using y2 - y1/x2-x1
-        int slope = (detectorPos.second - sourcePos.second)/(detectorPos.first - sourcePos.first);
+        double slope = (detectorPos.second - sourcePos.second)/(detectorPos.first - sourcePos.first);
+        double b = sourcePos.second - slope*sourcePos.first;
+        double c = sourcePos.first - slope*sourcePos.second;
         int delta = 1;
         /*
 
@@ -110,7 +112,6 @@ public:
                 }
                 return num
             */
-            double c = sourcePos.first; //x intercept
             double w_top = c + 0.5; //height of the intersect of left wall from bottom
             int j = subjectResolution - 1 - floor(w_top/delta); //column index
             double d = w_top - j; //distance
@@ -151,7 +152,6 @@ public:
                 }
                 return num
             */
-            double b = sourcePos.second; // y - int
             double h_left = b + 0.5; // height of intersect of left wall from bottom
             int i = subjectResolution - 1 - floor(h_left / delta); // row index
             double d = h_left - i; // distance
@@ -303,10 +303,10 @@ public:
             if (slope <= 1)
             {
                 // Calculate the height of intersect of left wall
-                double h_left = (-slope * 0.5) + sourcePos.second + 0.5; // D = 0.5
+                double h_left = (-slope * 0.5) + b + 0.5; // D = 0.5
 
                 // Calculate the width of intersect of bottom wall from left
-                double w_bot = (-(1 / slope) * 0.5) + sourcePos.first + 0.5; // D = 0.5
+                double w_bot = (-(1 / slope) * 0.5) + c + 0.5; // D = 0.5
 
                 int i, j;
                 double d;
@@ -381,10 +381,10 @@ public:
             else // Slope is greater than 1
             {
                 // Calculate the height of intersect of right wall
-                double h_right = (slope * 0.5) + sourcePos.second + 0.5; // D = 0.5
+                double h_right = (slope * 0.5) + b + 0.5; // D = 0.5
 
                 // Calculate the width of intersect of bottom wall from left
-                double w_bot = ((1 / slope) * 0.5) + sourcePos.first + 0.5; // D = 0.5
+                double w_bot = ((1 / slope) * 0.5) + c + 0.5; // D = 0.5
 
                 int i, j;
                 double d;
@@ -548,7 +548,6 @@ public:
             {
                 // Similar to the case when the slope is less than 1, but we invert the role of x and y.
                 // So, wherever we used to calculate the left wall, now we calculate the top wall, and vice versa.
-                double c = sourcePos.first; // x intercept
                 double D = 0.5 * subjectResolution; // Radius of the subject
                 double w_top = slope * D + c + D; // width of intersect of top wall, from left
                 int j, i;
@@ -562,7 +561,7 @@ public:
                 else
                 {
                     j = subjectResolution - 1;
-                    double h_right = slope * D + sourcePos.second + D; // height of intersect of right wall, from bottom
+                    double h_right = slope * D + b + D; // height of intersect of right wall, from bottom
                     i = subjectResolution - 1 - floor(h_right / delta);
                     d = h_right - i;
                 }
