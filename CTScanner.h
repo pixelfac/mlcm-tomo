@@ -106,9 +106,12 @@ public:
             // S3 = delta^2 - (m*delta - d)^2/2*m
             // S4 = d^2/2/m
         */
+        cout << "Slope: " << slope << endl;
 
         if (isinf(slope)) // the line is strictly vertical
         {
+            cout << "Vertical Line Case" << endl;
+
         /*
             c = x intercept of line, in units of pixels
             w_top = height of intersect of left wall, from bottom (in pixels) = c + D
@@ -130,7 +133,8 @@ public:
             }
             return num
         */
-            double w_top = c + D;                                 // height of the intersect of left wall from bottom
+            double w_top = sourcePos.first + D;                                 // height of the intersect of left wall from bottom
+            cout << "w_top: " << w_top << endl;
             int j = subjectResolution - 1 - floor(w_top / delta); // column index
             double d = w_top - j;                                 // distance
             int num = 0;                                          // counter

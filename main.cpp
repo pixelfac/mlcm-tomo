@@ -10,10 +10,10 @@ using namespace std;
 int main() {
     CTScanner test(4, 1, 1, 1, 2, 2);
 
-    auto sourcePos = test.GetCurrentSourcePosition(0);
-    auto detectorPos = test.GetCurrentDetectorPosition(0, 1);
+    auto sourcePos = pair<double, double>(0, 0.5);
+    auto detectorPos = pair<double, double>(0, -0.5);
 
-    map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos.first);
+    map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos);
 
     for(auto iter = row.begin(); iter != row.end(); iter++) {
         cout << "Index: " << iter->first << "\tArea: " << iter->second << endl;
