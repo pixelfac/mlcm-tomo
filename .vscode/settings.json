@@ -3,6 +3,7 @@
         "utility": "cpp",
         "map": "cpp",
         "cmath": "cpp",
-        "vector": "cpp"
+        "vector": "cpp",
+        "xtree": "cpp"
     }
 }
