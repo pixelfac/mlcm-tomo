@@ -3,6 +3,8 @@
 #include <math.h>
 #include "VectorUtils.h"
 #include <vector>
+#include <map>
+#include <iostream>
 
 using namespace std;
 
@@ -14,13 +16,21 @@ public:
     double detectorDist;       // distance from center detector to center of subject. Subject diagonal is sqrt(2)/2
     double detectorPanelWidth; // total width of entire detector panel
     int numDetectors;          // number of equal-sized detectors on detector panel.
-    double pixelSize;
 
     // subject is a square sized 1x1 units, centered at the origin, so bounds are (-0.5, 0.5) in both axes.
     // for simplicity and comparison, we are only working with square imaging tasks
     // These units are the same as determining the source and detector distance.
     // The diagonal from the subject to it's furthest corner is sqrt(2)/2
     int subjectResolution; // how many pixels each dimension of the subject should be partitioned into
+
+    CTScanner(int _views, double _sourceDist, double _detectorDist, double _detectorPanelWidth, int _numDetectors, int _subjectResolution) {
+        views = _views;
+        sourceDist = _sourceDist;
+        detectorDist = _detectorDist;
+        detectorPanelWidth = _detectorPanelWidth;
+        numDetectors = _numDetectors;
+        subjectResolution = _subjectResolution;
+    }
 
     // returns a coordinate pair for the position of the source, factoring in the rotation from the current view
     pair<double, double> GetCurrentSourcePosition(int viewNum)
@@ -72,11 +82,11 @@ public:
         // checking for overlap and pixel area
         //  see "Fast and accurate computation of system matrix for area integral model-based algebraic reconstruction technique" in Slack
 
-        pixelSize = 1.0 / subjectResolution; // this is delta?
+        double pixelSize = 1.0 / subjectResolution; // ;ength of each pixel as a fraction of the total subject length
     }
 
     // what pixels each line intersects, always computes pixel area below line, never above
-    void computeLineIntersections(pair<double, double> sourcePos, pair<double, double> detectorPos)
+    map<int, double> computeLineIntersections(pair<double, double> sourcePos, pair<double, double> detectorPos)
     {
         // calculate the slope of the line from the source to the detector using y2 - y1/x2-x1
         double slope = (detectorPos.second - sourcePos.second) / (detectorPos.first - sourcePos.first);
@@ -84,6 +94,11 @@ public:
         double c = (sourcePos.first - slope * sourcePos.second) * subjectResolution; // x intercept in units of pixels
         double D = 0.5 * subjectResolution;                                          // half-width/half-height of subject area, in units of pixels
         double delta = 1;
+
+        //store output
+        //key = index in subject grid
+        //value = area under line at that pos in subject grid
+        map<int, double> A;
         /*
             // reference from the aforementioned paper:
             // delta = the width of each square pixel (1/subjectResolution), but for our uses, we leave it as *1* to reduce floating pt error
@@ -121,14 +136,10 @@ public:
             int num = 0;                                          // counter
             int k = j;                                            // index
 
-            vector<int> index;   // stores indices, in order, of the pixels that our ray intersects
-            vector<double> area; // stores the areas, in order, of the pixels that our ray intersects
-
             for (int i = 0; i < subjectResolution; i++)
             {
-                index.push_back(k);
+                A[k] = d*delta;
                 k += 1;
-                area.push_back(d * delta);
                 num += 1;
             }
         }
@@ -161,14 +172,10 @@ public:
             int num = 0;                                           // Counter for number of pixels the ray intersects
             int k = i * subjectResolution;                         // index
 
-            vector<int> index;   // stores indices, in order, of the pixels that our ray intersects
-            vector<double> area; // stores the areas, in order, of the pixels that our ray intersects
-
             for (int j = 0; j < subjectResolution; j++)
             {
-                index.push_back(k);
+                A[k] = d*delta;
                 k += 1;
-                area.push_back(d * delta);
                 num += 1;
             }
         }
@@ -258,8 +265,6 @@ public:
         { // -1 <= slope <= 1
             if (slope > 0)
             {
-                vector<int> index;
-                vector<double> area;
                 int num = 0;
 
                 // Calculate the height of intersect of left wall
@@ -285,8 +290,9 @@ public:
                     j = subjectResolution - 1 - floor(w_bot / delta);
                     d = slope*(w_bot - floor(w_bot / delta));
 
-                    index.push_back(i*subjectResolution + j);
-                    area.push_back(d*(w_bot - floor(w_bot / delta)));
+                    // insert first triangle and move to next pixel so starting loop intersecting a vertical boundary
+                    // like the left wall case
+                    A[i*subjectResolution + j] = d*(w_bot - floor(w_bot / delta));
                     num += 1;
                     j += 1;
                 }
@@ -300,15 +306,13 @@ public:
                     if (d > delta)
                     {
                         d -= delta;
-                        index.push_back(k);
-                        area.push_back(delta * delta - pow((slope * delta - d), 2) / (2 * slope));
+                        A[k] = delta * delta - pow((slope * delta - d), 2) / (2 * slope);
                         num++;
                         i--;
                         k -= subjectResolution;
                         if (i >= 0)
                         {
-                            index.push_back(k);
-                            area.push_back(pow(d, 2) / (2 * slope));
+                            A[k] = pow(d, 2) / (2 * slope);
                             num++;
                             j++;
                             k++;
@@ -320,8 +324,7 @@ public:
                     }
                     else if (d < delta)
                     {
-                        index.push_back(k);
-                        area.push_back((2 * d - slope * delta) * delta / 2);
+                        A[k] = (2 * d - slope * delta) * delta / 2;
                         num++;
                         j++;
                         k++;
@@ -329,8 +332,7 @@ public:
                     else
                     {
                         d = 0;
-                        index.push_back(k);
-                        area.push_back((2 * d - slope * delta) * delta / 2);
+                        A[k] = (2 * d - slope * delta) * delta / 2;
                         j++;
                         i--;
                         k = k - subjectResolution + 1;
@@ -342,8 +344,6 @@ public:
             { // slope < 0
 
                 int num = 0;
-                vector<int> index;
-                vector<double> area;
 
                 // Determine whether line-right enters the right wall or bottom wall
                 // This depends on the y-intercept of the line.
@@ -365,8 +365,7 @@ public:
                     j = subjectResolution - 1 - floor(w_bot / delta);
                     d = slope*(1 - (w_bot - floor(w_bot / delta)));
 
-                    index.push_back(i*subjectResolution + j);
-                    area.push_back(d*(1 - (w_bot - floor(w_bot / delta))));
+                    A[i*subjectResolution + j] = d*(1 - (w_bot - floor(w_bot / delta)));
                     num += 1;
                     j -= 1;
                 }
@@ -380,15 +379,13 @@ public:
                     if (d > delta)
                     {
                         d -= delta;
-                        index.push_back(k);
-                        area.push_back((delta * delta - (slope * delta - d) * (slope * delta - d)) / (2 * slope));
+                        A[k] = (delta * delta - (slope * delta - d) * (slope * delta - d)) / (2 * slope);
                         num++;
                         i--;
                         k -= subjectResolution;
                         if (i >= 0)
                         {
-                            index.push_back(k);
-                            area.push_back(pow(d, 2) / (2 * slope));
+                            A[k] = pow(d, 2) / (2 * slope);
                             num++;
                             j++;
                             k++;
@@ -400,8 +397,7 @@ public:
                     }
                     else if (d < delta)
                     {
-                        index.push_back(k);
-                        area.push_back((2 * d - slope * delta) * delta / 2);
+                        A[k] = (2 * d - slope * delta) * delta / 2;
                         num++;
                         j--;
                         k--;
@@ -409,8 +405,7 @@ public:
                     else
                     {
                         d = 0;
-                        index.push_back(k);
-                        area.push_back((2 * d - slope * delta) * delta / 2);
+                        A[k] = (2 * d - slope * delta) * delta / 2;
                         j--;
                         i--;
                         k = k - subjectResolution - 1;
@@ -422,11 +417,15 @@ public:
         else // abs(slope) > 1
         {
             if (slope > 0) // slope > 1
-            { 
+            {
+                cout << "slope>1 case not implemented yet" << endl;
             }
             else // slope < -1
             {
+                cout << "slope>1 case not implemented yet" << endl;
             }
         }
+
+        return A;
     }
 };
