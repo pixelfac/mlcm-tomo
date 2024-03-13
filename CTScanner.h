@@ -149,6 +149,7 @@ public:
         }
         else if (slope == 0) // the line is strictly horizontal
         {
+            cout << "Horizontal Line Case" << endl;
         /*
                 b = y-intercept of line, in units of pixels
             h_left = height of intersect of left wall, from bottom (in pixels) = b + D
