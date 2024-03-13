@@ -143,7 +143,7 @@ public:
             for (int i = 0; i < subjectResolution; i++)
             {
                 A[k] = d*delta;
-                k += 1;
+                k += subjectResolution;
                 num += 1;
             }
         }
