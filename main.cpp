@@ -13,7 +13,6 @@ int main() {
     // auto sourcePos = pair<double, double>(0.5, 0);
     // auto detectorPos = pair<double, double>(-0.5, 0);
 
-
     auto sourcePos = pair<double, double>(-0.1, 1);
     auto detectorPos = pair<double, double>(-0.1, -1);
 
