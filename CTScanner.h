@@ -134,9 +134,8 @@ public:
             return num
         */
             double w_top = (sourcePos.first*subjectResolution) + D;                                 // height of the intersect of left wall from bottom
-            cout << "w_top: " << w_top << endl;
             int j = subjectResolution - 1 - floor(w_top / delta); // column index
-            double d = w_top - j;                                 // distance
+            double d = w_top - floor(w_top / delta);                                 // distance
             int num = 0;                                          // counter
             int k = j;                                            // index
 
@@ -173,9 +172,6 @@ public:
         */
             double h_left = (sourcePos.second*subjectResolution) + D;                                 // height of intersect of left wall from bottom
             int i = subjectResolution - 1 - floor(h_left / delta); // row index
-            cout << "sourcePos.second: " << sourcePos.second << endl;
-            cout << "i: " << i << endl;
-            cout << "h_left: " << h_left << endl;
             double d = h_left - floor(h_left / delta);                                 // distance
             int num = 0;                                           // Counter for number of pixels the ray intersects
             int k = i * subjectResolution;                         // index
