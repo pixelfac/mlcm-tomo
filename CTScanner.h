@@ -143,6 +143,7 @@ public:
 
             for (int i = 0; i < subjectResolution; i++)
             {
+                //computed area is to the left of the line, since there's no "under" for a vertical line
                 A[k] = d*delta;
                 k += subjectResolution;
                 num += 1;

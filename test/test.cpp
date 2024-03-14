@@ -2,7 +2,7 @@
 #include "catch.hpp"
 #include "../CTScanner.h"
 
-TEST_CASE("Horizontal Line", "[ComputeLine]") {
+TEST_CASE("Horizontal Line 2x2 grid", "[ComputeLine]") {
     CTScanner test(4, 1, 1, 1, 2, 2);
 
     SECTION("Horizontal Line through pixels") {
@@ -12,8 +12,8 @@ TEST_CASE("Horizontal Line", "[ComputeLine]") {
         map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos);
 
         REQUIRE(row.size() == 2);
-        REQUIRE(row[0] == Approx(0.2));
-        REQUIRE(row[1] == Approx(0.2));
+        REQUIRE(row.at(0) == Approx(0.2));
+        REQUIRE(row.at(1) == Approx(0.2));
     }
 
     SECTION("Horizontal Line between pixels") {
@@ -23,13 +23,13 @@ TEST_CASE("Horizontal Line", "[ComputeLine]") {
         map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos);
 
         REQUIRE(row.size() == 2);
-        REQUIRE(row[0] == Approx(0));
-        REQUIRE(row[1] == Approx(0));
+        REQUIRE(row.at(0) == Approx(0));
+        REQUIRE(row.at(1) == Approx(0));
     }
 
 }
 
-TEST_CASE("Vertical Line", "[ComputeLine]") {
+TEST_CASE("Vertical Line 2x2 grid", "[ComputeLine]") {
     CTScanner test(4, 1, 1, 1, 2, 2);
 
     SECTION("Vertical Line through pixels") {
@@ -39,8 +39,8 @@ TEST_CASE("Vertical Line", "[ComputeLine]") {
         map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos);
 
         REQUIRE(row.size() == 2);
-        REQUIRE(row[1] == Approx(0.2));
-        REQUIRE(row[3] == Approx(0.2));
+        REQUIRE(row.at(1) == Approx(0.2));
+        REQUIRE(row.at(3) == Approx(0.2));
     }
 
     SECTION("Vertical Line between pixels") {
@@ -50,7 +50,7 @@ TEST_CASE("Vertical Line", "[ComputeLine]") {
         map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos);
 
         REQUIRE(row.size() == 2);
-        REQUIRE(row[1] == Approx(0));
-        REQUIRE(row[3] == Approx(0));
+        REQUIRE(row.at(1) == Approx(0));
+        REQUIRE(row.at(3) == Approx(0));
     }
 }
