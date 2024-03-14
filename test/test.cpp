@@ -54,3 +54,18 @@ TEST_CASE("Vertical Line 2x2 grid", "[ComputeLine]") {
         REQUIRE(row.at(3) == Approx(0));
     }
 }
+
+TEST_CASE("0<m<=1 slope", "[ComputeLine]") {
+    CTScanner test(4, 1, 1, 1, 2, 2);
+
+    SECTION("slope=1, perfectly bisects grid") {
+        auto sourcePos = pair<double, double>(-1, -1);
+        auto detectorPos = pair<double, double>(1, 1);
+
+        map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos);
+
+        REQUIRE(row.size() == 2);
+        REQUIRE(row.at(1) == Approx(0.5));
+        REQUIRE(row.at(2) == Approx(0.5));
+    }
+}
