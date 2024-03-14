@@ -133,7 +133,7 @@ public:
             }
             return num
         */
-            double w_top = sourcePos.first + D;                                 // height of the intersect of left wall from bottom
+            double w_top = (sourcePos.first*subjectResolution) + D;                                 // height of the intersect of left wall from bottom
             cout << "w_top: " << w_top << endl;
             int j = subjectResolution - 1 - floor(w_top / delta); // column index
             double d = w_top - j;                                 // distance
@@ -171,9 +171,12 @@ public:
             }
             return num
         */
-            double h_left = b + D;                                 // height of intersect of left wall from bottom
+            double h_left = (sourcePos.second*subjectResolution) + D;                                 // height of intersect of left wall from bottom
             int i = subjectResolution - 1 - floor(h_left / delta); // row index
-            double d = h_left - i;                                 // distance
+            cout << "sourcePos.second: " << sourcePos.second << endl;
+            cout << "i: " << i << endl;
+            cout << "h_left: " << h_left << endl;
+            double d = h_left - floor(h_left / delta);                                 // distance
             int num = 0;                                           // Counter for number of pixels the ray intersects
             int k = i * subjectResolution;                         // index
 
@@ -185,7 +188,7 @@ public:
             }
         }
 
-        // (0,0) is CENTERED TOP LEFT
+        // i=0,j=0 is TOP LEFT
         // n = pixels in each row/column
         // m = slope (it's a ratio, no units needed)
         // b = y-intercept of line, in units of pixels
