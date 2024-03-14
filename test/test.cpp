@@ -29,15 +29,28 @@ TEST_CASE("Horizontal Line", "[ComputeLine]") {
 
 }
 
-TEST_CASE("Vertical Line Through Pixels", "[ComputeLine]") {
+TEST_CASE("Vertical Line", "[ComputeLine]") {
     CTScanner test(4, 1, 1, 1, 2, 2);
 
-    auto sourcePos = pair<double, double>(0.1, 1);
-    auto detectorPos = pair<double, double>(0.1, -1);
+    SECTION("Vertical Line through pixels") {
+        auto sourcePos = pair<double, double>(0.1, 1);
+        auto detectorPos = pair<double, double>(0.1, -1);
 
-    map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos);
+        map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos);
 
-    REQUIRE(row.size() == 2);
-    REQUIRE(row[1] == Approx(0.2));
-    REQUIRE(row[3] == Approx(0.2));
+        REQUIRE(row.size() == 2);
+        REQUIRE(row[1] == Approx(0.2));
+        REQUIRE(row[3] == Approx(0.2));
+    }
+
+    SECTION("Vertical Line between pixels") {
+        auto sourcePos = pair<double, double>(0, 1);
+        auto detectorPos = pair<double, double>(0, -1);
+
+        map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos);
+
+        REQUIRE(row.size() == 2);
+        REQUIRE(row[1] == Approx(0));
+        REQUIRE(row[3] == Approx(0));
+    }
 }

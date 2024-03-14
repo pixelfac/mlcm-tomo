@@ -10,8 +10,8 @@ using namespace std;
 int main() {
     CTScanner test(4, 1, 1, 1, 2, 2);
 
-    auto sourcePos = pair<double, double>(-0.1, 1);
-    auto detectorPos = pair<double, double>(-0.1, -1);
+    auto sourcePos = pair<double, double>(0.1, 1);
+    auto detectorPos = pair<double, double>(0.1, -1);
 
     map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos);
 

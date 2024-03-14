@@ -134,7 +134,9 @@ public:
             return num
         */
             double w_top = (sourcePos.first*subjectResolution) + D;                                 // height of the intersect of left wall from bottom
-            int j = subjectResolution - 1 - floor(w_top / delta); // column index
+            cout << "w_top: " << w_top << endl;
+            int j = floor(w_top / delta); // column index
+            cout << "j: " << j << endl;
             double d = w_top - floor(w_top / delta);                                 // distance
             int num = 0;                                          // counter
             int k = j;                                            // index
