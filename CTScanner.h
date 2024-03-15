@@ -272,8 +272,6 @@ public:
         { // -1 <= slope <= 1
             if (slope > 0)
             {
-                cout << "0<slope<=1" << endl;
-                cout << "slope: " << slope << endl;
                 int num = 0;
 
                 // Calculate the height of intersect of left wall
@@ -285,7 +283,6 @@ public:
                 // Check if h_left is within the range of pixels
                 if (0 <= h_left && h_left < subjectResolution)
                 {
-                    cout << "left wall collision" << endl;
                     // Start from the left wall
                     i = subjectResolution - 1 - floor(h_left / delta);
                     j = 0; // leftmost column
@@ -293,11 +290,9 @@ public:
                 }
                 else
                 {
-                    cout << "bottom wall collision" << endl;
                     // Start from the bottom wall
                     // Calculate the width of intersect of bottom wall from left
                     double w_bot = (-1 * (1.0f / slope) * D) + c + D;
-                    cout << "w_bot: " << w_bot << endl;
 
                     i = subjectResolution - 1; // bottom row
                     j = floor(w_bot / delta);
@@ -309,9 +304,6 @@ public:
                     num += 1;
                     j += 1;
                 }
-
-                cout << "d: " << d << endl;
-
 
                 int k = i * subjectResolution + j;
 
@@ -378,10 +370,10 @@ public:
                 {
                     double w_bot = (-1 * (1.0f / slope) * D) + c + D;
                     i = subjectResolution - 1; // bottom row
-                    j = subjectResolution - 1 - floor(w_bot / delta);
-                    d = slope*(1 - (w_bot - floor(w_bot / delta)));
+                    j = floor(w_bot / delta);
+                    d = -1 * slope*(w_bot - j);
 
-                    A[i*subjectResolution + j] = d*(1 - (w_bot - floor(w_bot / delta)));
+                    A[i*subjectResolution + j] = d*d/slope/-2;
                     num += 1;
                     j -= 1;
                 }
