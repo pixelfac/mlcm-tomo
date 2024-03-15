@@ -413,15 +413,15 @@ public:
                     }
                     else if (d < delta)
                     {
-                        A[k] = (2 * d - slope * delta) * delta / 2;
+                        A[k] = (2 * d + slope * delta) * delta / 2;
                         num++;
                         j--;
                         k--;
                     }
                     else
                     {
+                        A[k] = (2 * d + slope * delta) * delta / 2;
                         d = 0;
-                        A[k] = (2 * d - slope * delta) * delta / 2;
                         j--;
                         i--;
                         k = k - subjectResolution - 1;
