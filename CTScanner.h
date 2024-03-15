@@ -91,7 +91,7 @@ public:
         // calculate the slope of the line from the source to the detector using y2 - y1/x2-x1
         double slope = (detectorPos.second - sourcePos.second) / (detectorPos.first - sourcePos.first);
         double b = (sourcePos.second - slope * sourcePos.first) * subjectResolution; // y intercept in units of pixels
-        double c = (sourcePos.first - slope * sourcePos.second) * subjectResolution; // x intercept in units of pixels
+        double c = (sourcePos.first - (1.0/slope) * sourcePos.second) * subjectResolution; // x intercept in units of pixels
         double D = 0.5 * subjectResolution;                                          // half-width/half-height of subject area, in units of pixels
         double delta = 1;
 
@@ -297,6 +297,8 @@ public:
                     // Start from the bottom wall
                     // Calculate the width of intersect of bottom wall from left
                     double w_bot = (-1 * (1.0f / slope) * D) + c + D;
+                    cout << "w_bot: " << w_bot << endl;
+
                     i = subjectResolution - 1; // bottom row
                     j = subjectResolution - 1 - floor(w_bot / delta);
                     d = slope*(w_bot - floor(w_bot / delta));
