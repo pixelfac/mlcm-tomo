@@ -300,8 +300,8 @@ public:
                     cout << "w_bot: " << w_bot << endl;
 
                     i = subjectResolution - 1; // bottom row
-                    j = subjectResolution - 1 - floor(w_bot / delta);
-                    d = slope*(w_bot - floor(w_bot / delta));
+                    j = floor(w_bot / delta);
+                    d = slope*(1 - (w_bot - j));
 
                     // insert first triangle and move to next pixel so starting loop intersecting a vertical boundary
                     // like the left wall case
