@@ -395,7 +395,7 @@ public:
                     if (d > delta)
                     {
                         d -= delta;
-                        A[k] = (delta * delta - (slope * delta - d) * (slope * delta - d)) / (2 * slope);
+                        A[k] = delta * delta - pow((-1 * slope * delta - d), 2) / (-2 * slope);
                         num++;
                         i--;
                         k -= subjectResolution;
