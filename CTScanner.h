@@ -393,10 +393,10 @@ public:
                         k -= subjectResolution;
                         if (i >= 0)
                         {
-                            A[k] = pow(d, 2) / (2 * slope);
+                            A[k] = pow(d, 2) / (-2 * slope);
                             num++;
-                            j++;
-                            k++;
+                            j--;
+                            k--;
                         }
                         else
                         {
