@@ -363,7 +363,7 @@ public:
 
                 // Determine whether line-right enters the right wall or bottom wall
                 // This depends on the y-intercept of the line.
-                double h_right = slope * D + b + D; // height of intersect of left wall, from bottom
+                double h_right = slope * D + b + D; // height of intersect of right wall, from bottom
 
                 int i, j;
                 double d;
@@ -371,7 +371,7 @@ public:
                 if (0 <= h_right && h_right < subjectResolution)
                 {
                     i = subjectResolution - 1 - floor(h_right / delta);
-                    j = 0; // leftmost column
+                    j = subjectResolution - 1; // rightmost column
                     d = h_right - floor(h_right / delta);
                 }
                 else
