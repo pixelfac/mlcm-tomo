@@ -5,7 +5,8 @@
         "cmath": "cpp",
         "vector": "cpp",
         "xtree": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "ostream": "cpp"
     },
     "testMate.cpp.test.executables": "{test.exe}"
 }
