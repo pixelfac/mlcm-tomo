@@ -305,7 +305,7 @@ public:
 
                     // insert first triangle and move to next pixel so starting loop intersecting a vertical boundary
                     // like the left wall case
-                    A[i*subjectResolution + j] = d*(w_bot - floor(w_bot / delta));
+                    A[i*subjectResolution + j] = d*d/slope/2;
                     num += 1;
                     j += 1;
                 }

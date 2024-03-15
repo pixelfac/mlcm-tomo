@@ -109,7 +109,6 @@ TEST_CASE("0<m<=1 slope 2x2 grid", "[ComputeLine]") {
         map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos);
 
         REQUIRE(row.size() == 1);
-        REQUIRE(row.at(2) == Approx(0));
         REQUIRE(row.at(3) == Approx(0.25));
     }
 
