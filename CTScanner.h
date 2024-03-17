@@ -78,11 +78,38 @@ public:
         auto detectorPosition = GetCurrentDetectorPosition(viewNum, detectorNum);
 
         // TODO call computeLineIntersections for both lines
+        // auto lineLeft = computeLineIntersections(sourcePosition, detectorPosition.first)
+        // auto lineRight = computeLineIntersections(sourcePosition, detectorPosition.second)
 
         // checking for overlap and pixel area
         //  see "Fast and accurate computation of system matrix for area integral model-based algebraic reconstruction technique" in Slack
 
-        double pixelSize = 1.0 / subjectResolution; // ;ength of each pixel as a fraction of the total subject length
+        double pixelSize = 1.0 / subjectResolution; // length of each pixel as a fraction of the total subject length
+
+        /*
+        if detectorPosition.first.second > detectorPosition.second.second // if left side is higher than right side
+            lineUpper = lineLeft
+            lineLower = lineRight
+        else
+            lineUpper = lineRight
+            lineLower = lineLeft
+
+        j_0 = min(lineUpper.cols[0], lineLower.cols[0])
+        j_1 = max(lineUpper.cols[last], lineLower.cols[last])
+        j_min = max(lineUpper.cols[0], lineLower.cols[0])
+        j_max = min(lineUpper.cols[last], lineLower.cols[last])
+
+        if j_0 < j_min
+            group1 = [j_0, j_min-1] //only intersects 1 line
+
+            for all j in group1
+                all pixels below 
+
+        group2 = [j_min, j_max] //intersects both upper and lower lines
+
+        if j_max < j_1
+            group3 = [j_max+1, j_1] //only intersects 1 line
+        */
     }
 
     // what pixels each line intersects, always computes pixel area below line, never above
@@ -430,7 +457,7 @@ public:
             }
             else // slope < -1
             {
-                cout << "slope>1 case not implemented yet" << endl;
+                cout << "slope<-1 case not implemented yet" << endl;
             }
         }
 
