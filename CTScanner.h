@@ -94,16 +94,41 @@ public:
             lineUpper = lineRight
             lineLower = lineLeft
 
-        j_0 = min(lineUpper.cols[0], lineLower.cols[0])
-        j_1 = max(lineUpper.cols[last], lineLower.cols[last])
-        j_min = max(lineUpper.cols[0], lineLower.cols[0])
-        j_max = min(lineUpper.cols[last], lineLower.cols[last])
 
-        if j_0 < j_min
-            group1 = [j_0, j_min-1] //only intersects 1 line
+        if lineUpper.j[0] != lineLower.j[0]
+            if lineUpper.j[0] < lineLower.j[0]
+                //from [lineUpper.j[0], lineLower.j[0]) all pixels below lineUpper are 100% in fanbeam
+                group1Start = lineUpper.j[0]
+                group1End = lineLower.j[0]
+                group1Line = lineUpper
+            else
+                //from [lineLower.j[0], lineUpper.j[0]) all pixels above lineLower are 100% in fanbeam
+                group1Start = lineLower.j[0]
+                group1End = lineUpper.j[0]
+                group1Line = lineLower
 
-            for all j in group1
-                all pixels below 
+
+            group1 = [group1Start, group1End) //only intersects 1 line
+
+            index = 0
+            prevJ = -1
+            while group1Line.j[index] < group1End; index++)
+                if group1Line.j[index] = prevJ //iterate along line until found a new column
+                    index++
+                    continue
+
+                if group1Line is lineLower
+                    //all pixels above are 100% included, so area=1
+                    k = lineLower.k[0]
+                    while k >= 0
+                        A[k] = 1
+                        k -= n //go up 1 row in grid
+                else group1Line is lineUpper
+                    all pixels below are 100% included, so area=1
+                    k = lineUpper.k[0]
+                    while k < n*n
+                        A[k] = 1
+                        k += n //go down 1 row in grid
 
         group2 = [j_min, j_max] //intersects both upper and lower lines
 
