@@ -152,7 +152,7 @@ public:
                 while lineLower.k[index] == currJ
                     if lineLower.i[index] < minI
                         minI = lineLower.i[index]
-                    Area[lineLower.k[index]] = lineLower.A[index]
+                    Area[lineLower.k[index]] = 1 - lineLower.A[index]
                     index++
                     
                 //all pixels above are 100% included, so area=1
@@ -198,7 +198,7 @@ public:
                 while lineLower.k[index] == currJ
                     if lineLower.i[index] < minI
                         minI = lineLower.i[index]
-                    Area[lineLower.k[index]] = lineLower.A[index]
+                    Area[lineLower.k[index]] = 1 - lineLower.A[index]
                     index--
                     
                 //all pixels above are 100% included, so area=1
@@ -209,7 +209,20 @@ public:
 
 
 
-        group2 = [group2Start, group2End) //intersects both upper and lower lines
+group2 = [group2Start, group2End] //intersects both upper and lower lines
+        //for all columns
+            //get list of all pixels in currColumn that intersect lineUpper
+            //get list of all pixels in currColumn that intersect lineLower
+            //compare them against each other
+                //if they intersect the same pixel, Area = lineUpper.A - lineLower.A
+                //if only one intersects
+                    Area = lineUpper.A || 1 - lineLower.A
+                //if none intersect, Area = 1
+
+
+
+
+
         */
     }
 
