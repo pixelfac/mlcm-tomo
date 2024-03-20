@@ -227,7 +227,7 @@ group2 = [group2Start, group2End] //intersects both upper and lower lines
     }
 
     // what pixels each line intersects, always computes pixel area below line, never above
-    pair<vector<double>, pair<vector<int>, vector<int>>> computeLineIntersections(pair<double, double> sourcePos, pair<double, double> detectorPos) 
+    pair<vector<double>, pair<vector<int>, pair<vector<int>, vector<int>>>> computeLineIntersections(pair<double, double> sourcePos, pair<double, double> detectorPos) 
     {
         // calculate the slope of the line from the source to the detector using y2 - y1/x2-x1
         double slope = (detectorPos.second - sourcePos.second) / (detectorPos.first - sourcePos.first);
@@ -242,6 +242,7 @@ group2 = [group2Start, group2End] //intersects both upper and lower lines
         vector<double> A;
         vector<int> kList;
         vector<int> jList;
+        vector<int> iList;
         /*
             // reference from the aforementioned paper:
             // delta = the width of each square pixel (1/subjectResolution), but for our uses, we leave it as *1* to reduce floating pt error
@@ -290,6 +291,7 @@ group2 = [group2Start, group2End] //intersects both upper and lower lines
                 A.push_back(d*delta);
                 kList.push_back(k);
                 jList.push_back(j);
+                iList.push_back(i);
                 k += subjectResolution;
                 num += 1;
             }
@@ -329,6 +331,7 @@ group2 = [group2Start, group2End] //intersects both upper and lower lines
                 A.push_back(d*delta);
                 kList.push_back(k);
                 jList.push_back(j);
+                iList.push_back(i);
                 k += 1;
                 num += 1;
             }
@@ -450,6 +453,7 @@ group2 = [group2Start, group2End] //intersects both upper and lower lines
                     A.push_back(d*d/slope/2);
                     kList.push_back(i*subjectResolution + j);
                     jList.push_back(j);
+                    iList.push_back(i);
                     num += 1;
                     j += 1;
                 }
@@ -466,6 +470,7 @@ group2 = [group2Start, group2End] //intersects both upper and lower lines
                         A.push_back(delta * delta - pow((slope * delta - d), 2) / (2 * slope));
                         kList.push_back(k);
                         jList.push_back(j);
+                        iList.push_back(i);
                         num++;
                         i--;
                         k -= subjectResolution;
@@ -474,6 +479,7 @@ group2 = [group2Start, group2End] //intersects both upper and lower lines
                             A.push_back(pow(d, 2) / (2 * slope));
                             kList.push_back(k);
                             jList.push_back(j);
+                            iList.push_back(i);
                             num++;
                             j++;
                             k++;
@@ -488,6 +494,7 @@ group2 = [group2Start, group2End] //intersects both upper and lower lines
                         A.push_back((2 * d - slope * delta) * delta / 2);
                         kList.push_back(k);
                         jList.push_back(j);
+                        iList.push_back(i);
                         num++;
                         j++;
                         k++;
@@ -497,6 +504,7 @@ group2 = [group2Start, group2End] //intersects both upper and lower lines
                         A.push_back((2 * d - slope * delta) * delta / 2);
                         kList.push_back(k);
                         jList.push_back(j);
+                        iList.push_back(i);
                         d = 0;
                         j++;
                         i--;
@@ -533,6 +541,7 @@ group2 = [group2Start, group2End] //intersects both upper and lower lines
                     A.push_back(d*d/slope/-2);
                     kList.push_back(i*subjectResolution + j);
                     jList.push_back(j);
+                    iList.push_back(i);
                     num += 1;
                     j -= 1;
                 }
@@ -549,6 +558,7 @@ group2 = [group2Start, group2End] //intersects both upper and lower lines
                         A.push_back(delta * delta - pow((-1 * slope * delta - d), 2) / (-2 * slope));
                         kList.push_back(k);
                         jList.push_back(j);
+                        iList.push_back(i);
                         num++;
                         i--;
                         k -= subjectResolution;
@@ -557,6 +567,7 @@ group2 = [group2Start, group2End] //intersects both upper and lower lines
                             A.push_back(pow(d, 2) / (-2 * slope));
                             kList.push_back(k);
                             jList.push_back(j);
+                            iList.push_back(i);
                             num++;
                             j--;
                             k--;
@@ -571,6 +582,7 @@ group2 = [group2Start, group2End] //intersects both upper and lower lines
                         A.push_back((2 * d + slope * delta) * delta / 2);
                         kList.push_back(k);
                         jList.push_back(j);
+                        iList.push_back(i);
                         num++;
                         j--;
                         k--;
@@ -580,6 +592,7 @@ group2 = [group2Start, group2End] //intersects both upper and lower lines
                         A.push_back((2 * d + slope * delta) * delta / 2);
                         kList.push_back(k);
                         jList.push_back(j);
+                        iList.push_back(i);
                         d = 0;
                         j--;
                         i--;
@@ -600,9 +613,9 @@ group2 = [group2Start, group2End] //intersects both upper and lower lines
                 cout << "slope<-1 case not implemented yet" << endl;
             }
         }
-
-        pair<vector<int>, vector<int>> lists(kList, jList);
-        pair<vector<double>, pair<vector<int>, vector<int>>> rtrn(A, lists);
+        pair<vector<int>, vector<int>> lists(iList, jList);
+        pair<vector<int>, pair<vector<int>, vector<int>>> allList(kList, lists);
+        pair<vector<double>, pair<vector<int>, pair<vector<int>, vector<int>>>> rtrn(A, allList);
         return rtrn;
     }
 };
