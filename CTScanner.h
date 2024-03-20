@@ -87,6 +87,8 @@ public:
         double pixelSize = 1.0 / subjectResolution; // length of each pixel as a fraction of the total subject length
 
         /*
+        map<int, double> Area // map that correlates grid index, k, with the area of the pixel at k that is in the fan.
+
         if detectorPosition.first.second > detectorPosition.second.second // if left side is higher than right side
             lineUpper = lineLeft
             lineLower = lineRight
@@ -114,43 +116,52 @@ public:
 
 
 
-
+        //compute group 1, the left third of the grid, where only one line is present
+        //group 1 can be empty
         if lineUpperStart < lineLowerStart
-            //from [lineUpperStart, lineLowerStart all pixels below lineUpper are 100% in fanbeam
+            //from [lineUpperStart, lineLowerStart) all pixels below lineUpper are 100% in fanbeam
             group1Start = lineUpperStart
             group2Start = lineLowerStart
             group1Line = lineUpper
+
+            for (index = 0; lineUpper.j[index] < lineUpper.j[group2Start];)
+                maxI = lineUpper.i[index]
+                currJ = lineUpper.j[index]
+
+                //if the line has slope<-1, then there will be multiple pixels in same j, so need to find the lowest one to serve as the boundary
+                while lineUpper.k[index] == currJ
+                    if lineUpper.i[index] > maxI
+                        maxI = lineUpper.i[index]
+                    Area[lineUpper.k[index]] = lineUpper.A[index]
+                    index++
+                    
+                //all pixels below are 100% included, so area=1
+
+                while maxI*n + currJ < n*n
+                    Area[maxI*n + currJ] = 1
+                    maxI++
         else
             //from [lineLowerStart, lineUpperStart) all pixels above lineLower are 100% in fanbeam
             group1Start = lineLowerStart
             group2Start = lineLowerStart
             group1Line = lineLower
 
-        //if group size is 0, don't do anything
-            group1 = [group1Start, group2Start) //only intersects 1 line
+            for (index = 0; lineLower.j[index] < lineLower.j[group2Start];)
+                minI = lineLower.i[index]
+                currJ = lineLower.j[index]
 
-
-            for index = 0; group1Line.j[index] < group1Line.j[group2Start]; index++)
-                minI = group1Line.i[index]
-                maxI = minI
-                currJ = group1Line.j[index]
-
-                while group1Line.k[index] = currJ
-                    if group1Line.i[index] < minI
-                        minI = group1Line.i[index]
-                    if group1Line.i[index] > maxI
-                        maxI = group1Line.i[index]
+                //if the line has slope>1, then there will be multiple pixels in same j, so need to find the highest one to serve as the boundary
+                while lineLower.k[index] == currJ
+                    if lineLower.i[index] < minI
+                        minI = lineLower.i[index]
+                    Area[lineLower.k[index]] = lineLower.A[index]
                     index++
-
-                if group1Line is lineLower
-                    //all pixels above are 100% included, so area=1
                     
-                    
-                else group1Line is lineUpper
-                    //all pixels below are 100% included, so area=1
-                    
+                //all pixels above are 100% included, so area=1
 
-
+                while minI*n + currJ >= 0
+                    Area[minI*n + currJ] = 1
+                    minI--
 
         if lineUpperEnd != lineLowerEnd
             //calculate group2End, group3End
