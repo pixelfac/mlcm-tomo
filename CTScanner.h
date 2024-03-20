@@ -130,6 +130,10 @@ public:
                         A[k] = 1
                         k += n //go down 1 row in grid
 
+
+
+
+
         group2 = [j_min, j_max] //intersects both upper and lower lines
 
         if j_max < j_1
@@ -138,7 +142,7 @@ public:
     }
 
     // what pixels each line intersects, always computes pixel area below line, never above
-    map<int, double> computeLineIntersections(pair<double, double> sourcePos, pair<double, double> detectorPos)
+    pair<vector<double>, pair<vector<int>, vector<int>>> computeLineIntersections(pair<double, double> sourcePos, pair<double, double> detectorPos) 
     {
         // calculate the slope of the line from the source to the detector using y2 - y1/x2-x1
         double slope = (detectorPos.second - sourcePos.second) / (detectorPos.first - sourcePos.first);
@@ -150,7 +154,9 @@ public:
         //store output
         //key = index in subject grid
         //value = area under line at that pos in subject grid
-        map<int, double> A;
+        vector<double> A;
+        vector<int> kList;
+        vector<int> jList;
         /*
             // reference from the aforementioned paper:
             // delta = the width of each square pixel (1/subjectResolution), but for our uses, we leave it as *1* to reduce floating pt error
@@ -196,7 +202,9 @@ public:
             for (int i = 0; i < subjectResolution; i++)
             {
                 //computed area is to the left of the line, since there's no "under" for a vertical line
-                A[k] = d*delta;
+                A.push_back(d*delta);
+                kList.push_back(k);
+                jList.push_back(j);
                 k += subjectResolution;
                 num += 1;
             }
@@ -233,7 +241,9 @@ public:
 
             for (int j = 0; j < subjectResolution; j++)
             {
-                A[k] = d*delta;
+                A.push_back(d*delta);
+                kList.push_back(k);
+                jList.push_back(j);
                 k += 1;
                 num += 1;
             }
@@ -352,7 +362,9 @@ public:
 
                     // insert first triangle and move to next pixel so starting loop intersecting a vertical boundary
                     // like the left wall case
-                    A[i*subjectResolution + j] = d*d/slope/2;
+                    A.push_back(d*d/slope/2);
+                    kList.push_back(i*subjectResolution + j);
+                    jList.push_back(j);
                     num += 1;
                     j += 1;
                 }
@@ -366,13 +378,17 @@ public:
                     if (d > delta)
                     {
                         d -= delta;
-                        A[k] = delta * delta - pow((slope * delta - d), 2) / (2 * slope);
+                        A.push_back(delta * delta - pow((slope * delta - d), 2) / (2 * slope));
+                        kList.push_back(k);
+                        jList.push_back(j);
                         num++;
                         i--;
                         k -= subjectResolution;
                         if (i >= 0)
                         {
-                            A[k] = pow(d, 2) / (2 * slope);
+                            A.push_back(pow(d, 2) / (2 * slope));
+                            kList.push_back(k);
+                            jList.push_back(j);
                             num++;
                             j++;
                             k++;
@@ -384,14 +400,18 @@ public:
                     }
                     else if (d < delta)
                     {
-                        A[k] = (2 * d - slope * delta) * delta / 2;
+                        A.push_back((2 * d - slope * delta) * delta / 2);
+                        kList.push_back(k);
+                        jList.push_back(j);
                         num++;
                         j++;
                         k++;
                     }
                     else // d = delta
                     {
-                        A[k] = (2 * d - slope * delta) * delta / 2;
+                        A.push_back((2 * d - slope * delta) * delta / 2);
+                        kList.push_back(k);
+                        jList.push_back(j);
                         d = 0;
                         j++;
                         i--;
@@ -425,7 +445,9 @@ public:
                     j = floor(w_bot / delta);
                     d = -1 * slope*(w_bot - j);
 
-                    A[i*subjectResolution + j] = d*d/slope/-2;
+                    A.push_back(d*d/slope/-2);
+                    kList.push_back(i*subjectResolution + j);
+                    jList.push_back(j);
                     num += 1;
                     j -= 1;
                 }
@@ -439,13 +461,17 @@ public:
                     if (d > delta)
                     {
                         d -= delta;
-                        A[k] = delta * delta - pow((-1 * slope * delta - d), 2) / (-2 * slope);
+                        A.push_back(delta * delta - pow((-1 * slope * delta - d), 2) / (-2 * slope));
+                        kList.push_back(k);
+                        jList.push_back(j);
                         num++;
                         i--;
                         k -= subjectResolution;
                         if (i >= 0)
                         {
-                            A[k] = pow(d, 2) / (-2 * slope);
+                            A.push_back(pow(d, 2) / (-2 * slope));
+                            kList.push_back(k);
+                            jList.push_back(j);
                             num++;
                             j--;
                             k--;
@@ -457,14 +483,18 @@ public:
                     }
                     else if (d < delta)
                     {
-                        A[k] = (2 * d + slope * delta) * delta / 2;
+                        A.push_back((2 * d + slope * delta) * delta / 2);
+                        kList.push_back(k);
+                        jList.push_back(j);
                         num++;
                         j--;
                         k--;
                     }
                     else
                     {
-                        A[k] = (2 * d + slope * delta) * delta / 2;
+                        A.push_back((2 * d + slope * delta) * delta / 2);
+                        kList.push_back(k);
+                        jList.push_back(j);
                         d = 0;
                         j--;
                         i--;
@@ -486,6 +516,8 @@ public:
             }
         }
 
-        return A;
+        pair<vector<int>, vector<int>> lists(kList, jList);
+        pair<vector<double>, pair<vector<int>, vector<int>>> rtrn(A, lists);
+        return rtrn;
     }
 };
