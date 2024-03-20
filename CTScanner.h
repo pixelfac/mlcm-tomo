@@ -95,49 +95,70 @@ public:
             lineLower = lineLeft
 
 
-        if lineUpper.j[0] != lineLower.j[0]
-            if lineUpper.j[0] < lineLower.j[0]
-                //from [lineUpper.j[0], lineLower.j[0]) all pixels below lineUpper are 100% in fanbeam
-                group1Start = lineUpper.j[0]
-                group1End = lineLower.j[0]
-                group1Line = lineUpper
-            else
-                //from [lineLower.j[0], lineUpper.j[0]) all pixels above lineLower are 100% in fanbeam
-                group1Start = lineLower.j[0]
-                group1End = lineUpper.j[0]
-                group1Line = lineLower
+
+        //find end points on upper line
+        if (lineUpper.j[0] < lineUpper.j[last])
+            lineUpperStart = 0
+            lineUpperEnd = last
+        else
+            lineUpperStart = last
+            lineUpperEnd = 0
+
+        //find end points on lower line
+        if (lineLower.j[0] < lineLower.j[last])
+            lineLowerStart = 0
+            lineLowerEnd = last
+        else
+            lineLowerStart = last
+            lineLowerEnd = 0
 
 
-            group1 = [group1Start, group1End) //only intersects 1 line
 
-            index = 0
-            prevJ = -1
-            while group1Line.j[index] < group1End; index++)
-                if group1Line.j[index] = prevJ //iterate along line until found a new column
+
+        if lineUpperStart < lineLowerStart
+            //from [lineUpperStart, lineLowerStart all pixels below lineUpper are 100% in fanbeam
+            group1Start = lineUpperStart
+            group2Start = lineLowerStart
+            group1Line = lineUpper
+        else
+            //from [lineLowerStart, lineUpperStart) all pixels above lineLower are 100% in fanbeam
+            group1Start = lineLowerStart
+            group2Start = lineLowerStart
+            group1Line = lineLower
+
+        //if group size is 0, don't do anything
+            group1 = [group1Start, group2Start) //only intersects 1 line
+
+
+            for index = 0; group1Line.j[index] < group1Line.j[group2Start]; index++)
+                minI = group1Line.i[index]
+                maxI = minI
+                currJ = group1Line.j[index]
+
+                while group1Line.k[index] = currJ
+                    if group1Line.i[index] < minI
+                        minI = group1Line.i[index]
+                    if group1Line.i[index] > maxI
+                        maxI = group1Line.i[index]
                     index++
-                    continue
 
                 if group1Line is lineLower
                     //all pixels above are 100% included, so area=1
-                    k = lineLower.k[0]
-                    while k >= 0
-                        A[k] = 1
-                        k -= n //go up 1 row in grid
+                    
+                    
                 else group1Line is lineUpper
-                    all pixels below are 100% included, so area=1
-                    k = lineUpper.k[0]
-                    while k < n*n
-                        A[k] = 1
-                        k += n //go down 1 row in grid
+                    //all pixels below are 100% included, so area=1
+                    
 
 
 
+        if lineUpperEnd != lineLowerEnd
+            //calculate group2End, group3End
+            group3 = (group2End, group3End] //only intersects 1 line
 
 
-        group2 = [j_min, j_max] //intersects both upper and lower lines
 
-        if j_max < j_1
-            group3 = [j_max+1, j_1] //only intersects 1 line
+        group2 = [group2Start, group2End) //intersects both upper and lower lines
         */
     }
 
