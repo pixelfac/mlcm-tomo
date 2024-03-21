@@ -98,7 +98,7 @@ public:
 
 
 
-        //find end points on upper line
+    //find end points on upper line
         if (lineUpper.j[0] < lineUpper.j[last])
             lineUpperStart = 0
             lineUpperEnd = last
@@ -106,7 +106,7 @@ public:
             lineUpperStart = last
             lineUpperEnd = 0
 
-        //find end points on lower line
+    //find end points on lower line
         if (lineLower.j[0] < lineLower.j[last])
             lineLowerStart = 0
             lineLowerEnd = last
@@ -227,7 +227,7 @@ group2 = [group2Start, group2End] //intersects both upper and lower lines
     }
 
     // what pixels each line intersects, always computes pixel area below line, never above
-    pair<vector<double>, pair<vector<int>, pair<vector<int>, vector<int>>>> computeLineIntersections(pair<double, double> sourcePos, pair<double, double> detectorPos) 
+    pair<map<int, double>, pair<vector<int>, pair<vector<int>, vector<int>>>> computeLineIntersections(pair<double, double> sourcePos, pair<double, double> detectorPos) 
     {
         // calculate the slope of the line from the source to the detector using y2 - y1/x2-x1
         double slope = (detectorPos.second - sourcePos.second) / (detectorPos.first - sourcePos.first);
@@ -239,7 +239,7 @@ group2 = [group2Start, group2End] //intersects both upper and lower lines
         //store output
         //key = index in subject grid
         //value = area under line at that pos in subject grid
-        vector<double> A;
+        map<int, double> A;
         vector<int> kList;
         vector<int> jList;
         vector<int> iList;
@@ -288,7 +288,7 @@ group2 = [group2Start, group2End] //intersects both upper and lower lines
             for (int i = 0; i < subjectResolution; i++)
             {
                 //computed area is to the left of the line, since there's no "under" for a vertical line
-                A.push_back(d*delta);
+                A[k] = d*delta;
                 kList.push_back(k);
                 jList.push_back(j);
                 iList.push_back(i);
@@ -328,7 +328,7 @@ group2 = [group2Start, group2End] //intersects both upper and lower lines
 
             for (int j = 0; j < subjectResolution; j++)
             {
-                A.push_back(d*delta);
+                A[k] = d*delta;
                 kList.push_back(k);
                 jList.push_back(j);
                 iList.push_back(i);
@@ -450,7 +450,7 @@ group2 = [group2Start, group2End] //intersects both upper and lower lines
 
                     // insert first triangle and move to next pixel so starting loop intersecting a vertical boundary
                     // like the left wall case
-                    A.push_back(d*d/slope/2);
+                    A[i*subjectResolution + j] = d*d/slope/2;
                     kList.push_back(i*subjectResolution + j);
                     jList.push_back(j);
                     iList.push_back(i);
@@ -467,7 +467,7 @@ group2 = [group2Start, group2End] //intersects both upper and lower lines
                     if (d > delta)
                     {
                         d -= delta;
-                        A.push_back(delta * delta - pow((slope * delta - d), 2) / (2 * slope));
+                        A[k] = delta * delta - pow((slope * delta - d), 2) / (2 * slope);
                         kList.push_back(k);
                         jList.push_back(j);
                         iList.push_back(i);
@@ -476,7 +476,7 @@ group2 = [group2Start, group2End] //intersects both upper and lower lines
                         k -= subjectResolution;
                         if (i >= 0)
                         {
-                            A.push_back(pow(d, 2) / (2 * slope));
+                            A[k] = pow(d, 2) / (2 * slope);
                             kList.push_back(k);
                             jList.push_back(j);
                             iList.push_back(i);
@@ -491,7 +491,7 @@ group2 = [group2Start, group2End] //intersects both upper and lower lines
                     }
                     else if (d < delta)
                     {
-                        A.push_back((2 * d - slope * delta) * delta / 2);
+                        A[k] = (2 * d - slope * delta) * delta / 2;
                         kList.push_back(k);
                         jList.push_back(j);
                         iList.push_back(i);
@@ -501,7 +501,7 @@ group2 = [group2Start, group2End] //intersects both upper and lower lines
                     }
                     else // d = delta
                     {
-                        A.push_back((2 * d - slope * delta) * delta / 2);
+                        A[k] = (2 * d - slope * delta) * delta / 2;
                         kList.push_back(k);
                         jList.push_back(j);
                         iList.push_back(i);
@@ -538,7 +538,7 @@ group2 = [group2Start, group2End] //intersects both upper and lower lines
                     j = floor(w_bot / delta);
                     d = -1 * slope*(w_bot - j);
 
-                    A.push_back(d*d/slope/-2);
+                    A[i*subjectResolution + j] = d*d/slope/-2;
                     kList.push_back(i*subjectResolution + j);
                     jList.push_back(j);
                     iList.push_back(i);
@@ -555,7 +555,7 @@ group2 = [group2Start, group2End] //intersects both upper and lower lines
                     if (d > delta)
                     {
                         d -= delta;
-                        A.push_back(delta * delta - pow((-1 * slope * delta - d), 2) / (-2 * slope));
+                        A[k] = delta * delta - pow((-1 * slope * delta - d), 2) / (-2 * slope);
                         kList.push_back(k);
                         jList.push_back(j);
                         iList.push_back(i);
@@ -564,7 +564,7 @@ group2 = [group2Start, group2End] //intersects both upper and lower lines
                         k -= subjectResolution;
                         if (i >= 0)
                         {
-                            A.push_back(pow(d, 2) / (-2 * slope));
+                            A[k] = pow(d, 2) / (-2 * slope);
                             kList.push_back(k);
                             jList.push_back(j);
                             iList.push_back(i);
@@ -579,7 +579,7 @@ group2 = [group2Start, group2End] //intersects both upper and lower lines
                     }
                     else if (d < delta)
                     {
-                        A.push_back((2 * d + slope * delta) * delta / 2);
+                        A[k] = (2 * d + slope * delta) * delta / 2;
                         kList.push_back(k);
                         jList.push_back(j);
                         iList.push_back(i);
@@ -589,7 +589,7 @@ group2 = [group2Start, group2End] //intersects both upper and lower lines
                     }
                     else
                     {
-                        A.push_back((2 * d + slope * delta) * delta / 2);
+                        A[k] = (2 * d + slope * delta) * delta / 2;
                         kList.push_back(k);
                         jList.push_back(j);
                         iList.push_back(i);
@@ -615,7 +615,7 @@ group2 = [group2Start, group2End] //intersects both upper and lower lines
         }
         pair<vector<int>, vector<int>> lists(iList, jList);
         pair<vector<int>, pair<vector<int>, vector<int>>> allList(kList, lists);
-        pair<vector<double>, pair<vector<int>, pair<vector<int>, vector<int>>>> rtrn(A, allList);
+        pair<map<int, double>, pair<vector<int>, pair<vector<int>, vector<int>>>> rtrn(A, allList);
         return rtrn;
     }
 };

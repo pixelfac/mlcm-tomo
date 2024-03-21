@@ -6,7 +6,11 @@
         "vector": "cpp",
         "xtree": "cpp",
         "iostream": "cpp",
-        "ostream": "cpp"
+        "ostream": "cpp",
+        "random": "cpp",
+        "deque": "cpp",
+        "list": "cpp",
+        "xstring": "cpp"
     },
     "testMate.cpp.test.executables": "{test.exe}"
 }

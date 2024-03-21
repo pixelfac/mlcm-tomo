@@ -9,7 +9,7 @@ TEST_CASE("Horizontal Line 2x2 grid", "[ComputeLine]") {
         auto sourcePos = pair<double, double>(1, 0.1);
         auto detectorPos = pair<double, double>(-1, 0.1);
 
-        map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos);
+        map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos).first;
 
         REQUIRE(row.size() == 2);
         REQUIRE(row.at(0) == Approx(0.2));
@@ -20,7 +20,7 @@ TEST_CASE("Horizontal Line 2x2 grid", "[ComputeLine]") {
         auto sourcePos = pair<double, double>(1, 0);
         auto detectorPos = pair<double, double>(-1, 0);
 
-        map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos);
+        map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos).first;
 
         REQUIRE(row.size() == 2);
         REQUIRE(row.at(0) == Approx(0));
@@ -36,7 +36,7 @@ TEST_CASE("Vertical Line 2x2 grid", "[ComputeLine]") {
         auto sourcePos = pair<double, double>(0.1, 1);
         auto detectorPos = pair<double, double>(0.1, -1);
 
-        map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos);
+        map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos).first;
 
         REQUIRE(row.size() == 2);
         REQUIRE(row.at(1) == Approx(0.2));
@@ -47,7 +47,7 @@ TEST_CASE("Vertical Line 2x2 grid", "[ComputeLine]") {
         auto sourcePos = pair<double, double>(0, 1);
         auto detectorPos = pair<double, double>(0, -1);
 
-        map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos);
+        map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos).first;
 
         REQUIRE(row.size() == 2);
         REQUIRE(row.at(1) == Approx(0));
@@ -62,7 +62,7 @@ TEST_CASE("0<m<=1 slope 2x2 grid", "[ComputeLine]") {
         auto sourcePos = pair<double, double>(-1, -1);
         auto detectorPos = pair<double, double>(1, 1);
 
-        map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos);
+        map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos).first;
 
         REQUIRE(row.size() == 2);
         REQUIRE(row.at(1) == Approx(0.5));
@@ -73,7 +73,7 @@ TEST_CASE("0<m<=1 slope 2x2 grid", "[ComputeLine]") {
         auto sourcePos = pair<double, double>(-1, -0.5);
         auto detectorPos = pair<double, double>(1, 0.5);
 
-        map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos);
+        map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos).first;
 
         REQUIRE(row.size() == 2);
         REQUIRE(row.at(1) == Approx(0.25));
@@ -84,7 +84,7 @@ TEST_CASE("0<m<=1 slope 2x2 grid", "[ComputeLine]") {
         auto sourcePos = pair<double, double>(-0.5, 0);
         auto detectorPos = pair<double, double>(0.5, 0.5);
 
-        map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos);
+        map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos).first;
 
         REQUIRE(row.size() == 2);
         REQUIRE(row.at(0) == Approx(0.25));
@@ -95,7 +95,7 @@ TEST_CASE("0<m<=1 slope 2x2 grid", "[ComputeLine]") {
         auto sourcePos = pair<double, double>(-0.6, 0);
         auto detectorPos = pair<double, double>(0.5, 0.55);
 
-        map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos);
+        map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos).first;
 
         REQUIRE(row.size() == 2);
         REQUIRE(row.at(0) == Approx(0.35));
@@ -106,7 +106,7 @@ TEST_CASE("0<m<=1 slope 2x2 grid", "[ComputeLine]") {
         auto sourcePos = pair<double, double>(0, -0.5);
         auto detectorPos = pair<double, double>(0.5, -0.25);
 
-        map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos);
+        map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos).first;
 
         REQUIRE(row.size() == 1);
         REQUIRE(row.at(3) == Approx(0.25));
@@ -116,7 +116,7 @@ TEST_CASE("0<m<=1 slope 2x2 grid", "[ComputeLine]") {
         auto sourcePos = pair<double, double>(0, -0.6);
         auto detectorPos = pair<double, double>(0.5, -0.35);
 
-        map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos);
+        map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos).first;
 
         REQUIRE(row.size() == 1);
         REQUIRE(row.at(3) == Approx(0.09));
@@ -126,7 +126,7 @@ TEST_CASE("0<m<=1 slope 2x2 grid", "[ComputeLine]") {
         auto sourcePos = pair<double, double>(-0.4, -0.5);
         auto detectorPos = pair<double, double>(0, -0.3);
 
-        map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos);
+        map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos).first;
 
         REQUIRE(row.size() == 2);
         REQUIRE(row.at(2) == Approx(0.16));
@@ -137,7 +137,7 @@ TEST_CASE("0<m<=1 slope 2x2 grid", "[ComputeLine]") {
         auto sourcePos = pair<double, double>(-0.5, -0.65);
         auto detectorPos = pair<double, double>(0, -0.3);
 
-        map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos);
+        map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos).first;
 
         REQUIRE(row.size() == 3);
         REQUIRE(row.at(1) == Approx(0.00714).epsilon(0.001));
@@ -153,7 +153,7 @@ TEST_CASE("-1<=m<0 slope 2x2 grid", "[ComputeLine]") {
         auto sourcePos = pair<double, double>(1, -1);
         auto detectorPos = pair<double, double>(-1, 1);
 
-        map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos);
+        map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos).first;
 
         REQUIRE(row.size() == 2);
         REQUIRE(row.at(0) == Approx(0.5));
@@ -164,7 +164,7 @@ TEST_CASE("-1<=m<0 slope 2x2 grid", "[ComputeLine]") {
         auto sourcePos = pair<double, double>(1, -0.5);
         auto detectorPos = pair<double, double>(-1, 0.5);
 
-        map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos);
+        map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos).first;
 
         REQUIRE(row.size() == 2);
         REQUIRE(row.at(0) == Approx(0.25));
@@ -175,7 +175,7 @@ TEST_CASE("-1<=m<0 slope 2x2 grid", "[ComputeLine]") {
         auto sourcePos = pair<double, double>(0.5, 0);
         auto detectorPos = pair<double, double>(-0.5, 0.5);
 
-        map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos);
+        map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos).first;
 
         REQUIRE(row.size() == 2);
         REQUIRE(row.at(1) == Approx(0.25));
@@ -186,7 +186,7 @@ TEST_CASE("-1<=m<0 slope 2x2 grid", "[ComputeLine]") {
         auto sourcePos = pair<double, double>(0.6, 0);
         auto detectorPos = pair<double, double>(-0.5, 0.55);
 
-        map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos);
+        map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos).first;
 
         REQUIRE(row.size() == 2);
         REQUIRE(row.at(1) == Approx(0.35));
@@ -197,7 +197,7 @@ TEST_CASE("-1<=m<0 slope 2x2 grid", "[ComputeLine]") {
         auto sourcePos = pair<double, double>(0, -0.5);
         auto detectorPos = pair<double, double>(-0.5, -0.25);
 
-        map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos);
+        map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos).first;
 
         REQUIRE(row.size() == 2);
         REQUIRE(row.at(3) == Approx(0));
@@ -208,7 +208,7 @@ TEST_CASE("-1<=m<0 slope 2x2 grid", "[ComputeLine]") {
         auto sourcePos = pair<double, double>(0, -0.6);
         auto detectorPos = pair<double, double>(-0.5, -0.35);
 
-        map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos);
+        map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos).first;
 
         REQUIRE(row.size() == 1);
         REQUIRE(row.at(2) == Approx(0.09));
@@ -218,7 +218,7 @@ TEST_CASE("-1<=m<0 slope 2x2 grid", "[ComputeLine]") {
         auto sourcePos = pair<double, double>(0.4, -0.5);
         auto detectorPos = pair<double, double>(0, -0.3);
 
-        map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos);
+        map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos).first;
 
         REQUIRE(row.size() == 2);
         REQUIRE(row.at(3) == Approx(0.16));
@@ -229,7 +229,7 @@ TEST_CASE("-1<=m<0 slope 2x2 grid", "[ComputeLine]") {
         auto sourcePos = pair<double, double>(0.5, -0.65);
         auto detectorPos = pair<double, double>(0, -0.3);
 
-        map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos);
+        map<int, double> row = test.computeLineIntersections(sourcePos, detectorPos).first;
 
         REQUIRE(row.size() == 3);
         REQUIRE(row.at(0) == Approx(0.00714).epsilon(0.001));
