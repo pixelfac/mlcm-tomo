@@ -250,11 +250,11 @@ group2 = [group2Start, group2End] //intersects both upper and lower lines
             // S3 = delta^2 - (m*delta - d)^2/2*m
             // S4 = d^2/2/m
         */
-        cout << "Slope: " << slope << endl;
+        // cout << "Slope: " << slope << endl;
 
         if (isinf(slope)) // the line is strictly vertical
         {
-            cout << "Vertical Line Case" << endl;
+            // cout << "Vertical Line Case" << endl;
 
         /*
             c = x intercept of line, in units of pixels
@@ -278,9 +278,7 @@ group2 = [group2Start, group2End] //intersects both upper and lower lines
             return num
         */
             double w_top = (sourcePos.first*subjectResolution) + D;                                 // height of the intersect of left wall from bottom
-            cout << "w_top: " << w_top << endl;
             int j = floor(w_top / delta); // column index
-            cout << "j: " << j << endl;
             double d = w_top - floor(w_top / delta);                                 // distance
             int num = 0;                                          // counter
             int k = j;                                            // index
@@ -298,7 +296,7 @@ group2 = [group2Start, group2End] //intersects both upper and lower lines
         }
         else if (slope == 0) // the line is strictly horizontal
         {
-            cout << "Horizontal Line Case" << endl;
+            // cout << "Horizontal Line Case" << endl;
         /*
                 b = y-intercept of line, in units of pixels
             h_left = height of intersect of left wall, from bottom (in pixels) = b + D
