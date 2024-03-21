@@ -9,20 +9,22 @@
 using namespace std;
 
 int main() {
-    auto start = std::chrono::high_resolution_clock::now();
+    auto start = chrono::high_resolution_clock::now();
     CTScanner test(4, 1, 1, 1, 2, 128);
 
     auto sourcePos = pair<double, double>(0.5, -0.65);
         auto detectorPos = pair<double, double>(0, -0.3);
 
-    for (int i = 0; i < 64000; i++)
+    int iterations = 180 * 180 * 2;
+    for (int i = 0; i < iterations; i++)
         auto row = test.computeLineIntersections(sourcePos, detectorPos).first;
 
 
-    auto end = std::chrono::high_resolution_clock::now();
+    auto end = chrono::high_resolution_clock::now();
 
-    std::chrono::duration<double> duration = end - start;
-    std::cout << "Execution time: " << duration.count() << " seconds." << std::endl;
+    chrono::duration<double> duration = end - start;
+    cout << "Execution time: " << duration.count() << " seconds." << endl;
+    cout << "Avg Per Func Call: " << duration.count() / iterations << " seconds" << endl;
 
 
 

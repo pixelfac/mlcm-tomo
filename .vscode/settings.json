@@ -10,7 +10,8 @@
         "random": "cpp",
         "deque": "cpp",
         "list": "cpp",
-        "xstring": "cpp"
+        "xstring": "cpp",
+        "chrono": "cpp"
     },
     "testMate.cpp.test.executables": "{test.exe}"
 }
