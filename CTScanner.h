@@ -209,6 +209,8 @@ public:
 
 
 group2 = [group2Start, group2End] //intersects both upper and lower lines
+        //get index for both upper and lower lines that begin group 2, and the j that ends group 2
+
         //for all columns
             //get list of all pixels in currColumn that intersect lineUpper
             //get list of all pixels in currColumn that intersect lineLower
@@ -493,6 +495,13 @@ group2 = [group2Start, group2End] //intersects both upper and lower lines
         }
         else // abs(slope) > 1
         {
+            // TODO if -1 > m > 1
+            // NOT SURE, NEEDS TESTING
+            // for m < -1, m > 1: m=1/m, swap b<=>c, this will yield
+            // when <increasing/decreasing> <i/j> to <0/n>, invert it to <increasing/decreasing> <j/i> to <n/0>
+            // to convert k out of inverted coordinatesk = k <+/-> <n/1> --> k = k <-/+> <i/n>
+            // k = (n-1-j)*n + (n-1-i)
+
             if (slope > 0) // slope > 1
             {
                 cout << "slope>1 case not implemented yet" << endl;
