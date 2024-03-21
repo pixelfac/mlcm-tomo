@@ -23,7 +23,8 @@ public:
     // The diagonal from the subject to it's furthest corner is sqrt(2)/2
     int subjectResolution; // how many pixels each dimension of the subject should be partitioned into
 
-    CTScanner(int _views, double _sourceDist, double _detectorDist, double _detectorPanelWidth, int _numDetectors, int _subjectResolution) {
+    CTScanner(int _views, double _sourceDist, double _detectorDist, double _detectorPanelWidth, int _numDetectors, int _subjectResolution)
+    {
         views = _views;
         sourceDist = _sourceDist;
         detectorDist = _detectorDist;
@@ -84,8 +85,6 @@ public:
         // checking for overlap and pixel area
         //  see "Fast and accurate computation of system matrix for area integral model-based algebraic reconstruction technique" in Slack
 
-        double pixelSize = 1.0 / subjectResolution; // length of each pixel as a fraction of the total subject length
-
         /*
         map<int, double> Area // map that correlates grid index, k, with the area of the pixel at k that is in the fan.
 
@@ -133,7 +132,7 @@ public:
                         maxI = lineUpper.i[index]
                     Area[lineUpper.k[index]] = lineUpper.A[index]
                     index++
-                    
+
                 //all pixels below are 100% included, so area=1
 
                 while maxI*n + currJ < n*n
@@ -154,7 +153,7 @@ public:
                         minI = lineLower.i[index]
                     Area[lineLower.k[index]] = 1 - lineLower.A[index]
                     index++
-                    
+
                 //all pixels above are 100% included, so area=1
 
                 while minI*n + currJ >= 0
@@ -179,7 +178,7 @@ public:
                         maxI = lineUpper.i[index]
                     Area[lineUpper.k[index]] = lineUpper.A[index]
                     index--
-                    
+
                 //all pixels below are 100% included, so area=1
 
                 while maxI*n + currJ < n*n
@@ -200,7 +199,7 @@ public:
                         minI = lineLower.i[index]
                     Area[lineLower.k[index]] = 1 - lineLower.A[index]
                     index--
-                    
+
                 //all pixels above are 100% included, so area=1
 
                 while minI*n + currJ >= 0
@@ -227,18 +226,18 @@ group2 = [group2Start, group2End] //intersects both upper and lower lines
     }
 
     // what pixels each line intersects, always computes pixel area below line, never above
-    pair<map<int, double>, pair<vector<int>, pair<vector<int>, vector<int>>>> computeLineIntersections(pair<double, double> sourcePos, pair<double, double> detectorPos) 
+    pair<map<int, double>, pair<vector<int>, pair<vector<int>, vector<int>>>> computeLineIntersections(pair<double, double> sourcePos, pair<double, double> detectorPos)
     {
         // calculate the slope of the line from the source to the detector using y2 - y1/x2-x1
         double slope = (detectorPos.second - sourcePos.second) / (detectorPos.first - sourcePos.first);
-        double b = (sourcePos.second - slope * sourcePos.first) * subjectResolution; // y intercept in units of pixels
-        double c = (sourcePos.first - (1.0/slope) * sourcePos.second) * subjectResolution; // x intercept in units of pixels
-        double D = 0.5 * subjectResolution;                                          // half-width/half-height of subject area, in units of pixels
+        double b = (sourcePos.second - slope * sourcePos.first) * subjectResolution;         // y intercept in units of pixels
+        double c = (sourcePos.first - (1.0 / slope) * sourcePos.second) * subjectResolution; // x intercept in units of pixels
+        double D = 0.5 * subjectResolution;                                                  // half-width/half-height of subject area, in units of pixels
         double delta = 1;
 
-        //store output
-        //key = index in subject grid
-        //value = area under line at that pos in subject grid
+        // store output
+        // key = index in subject grid
+        // value = area under line at that pos in subject grid
         map<int, double> A;
         vector<int> kList;
         vector<int> jList;
@@ -250,43 +249,21 @@ group2 = [group2Start, group2End] //intersects both upper and lower lines
             // S3 = delta^2 - (m*delta - d)^2/2*m
             // S4 = d^2/2/m
         */
+
         // cout << "Slope: " << slope << endl;
 
         if (isinf(slope)) // the line is strictly vertical
         {
-            // cout << "Vertical Line Case" << endl;
-
-        /*
-            c = x intercept of line, in units of pixels
-            w_top = height of intersect of left wall, from bottom (in pixels) = c + D
-            i = 0
-            j = column index = n - 1 - floor(w_top/delta)
-            d = w_top - j
-            num = 0;
-            k = i*n + j
-
-            vector<int> index // stores indices, in order, of the pixels that our ray intersects
-            vector<double> area // stores the areas, in order, of the pixels that our ray intersects
-            //each value in area corresponds to the pixel at the same location in index
-
-            for (; i < n; i++) {
-                index[num] = k
-                k += 1
-                area[num] = d*delta
-                num += 1
-            }
-            return num
-        */
-            double w_top = (sourcePos.first*subjectResolution) + D;                                 // height of the intersect of left wall from bottom
-            int j = floor(w_top / delta); // column index
-            double d = w_top - floor(w_top / delta);                                 // distance
-            int num = 0;                                          // counter
-            int k = j;                                            // index
+            double w_top = (sourcePos.first * subjectResolution) + D; // height of the intersect of left wall from bottom
+            int j = floor(w_top / delta);                             // column index
+            double d = w_top - floor(w_top / delta);                  // distance
+            int num = 0;                                              // counter
+            int k = j;                                                // index
 
             for (int i = 0; i < subjectResolution; i++)
             {
-                //computed area is to the left of the line, since there's no "under" for a vertical line
-                A[k] = d*delta;
+                // computed area is to the left of the line, since there's no "under" for a vertical line
+                A[k] = d * delta;
                 kList.push_back(k);
                 jList.push_back(j);
                 iList.push_back(i);
@@ -296,37 +273,15 @@ group2 = [group2Start, group2End] //intersects both upper and lower lines
         }
         else if (slope == 0) // the line is strictly horizontal
         {
-            // cout << "Horizontal Line Case" << endl;
-        /*
-                b = y-intercept of line, in units of pixels
-            h_left = height of intersect of left wall, from bottom (in pixels) = b + D
-            i = row index = n - 1 - floor(h_left/delta)
-            j = 0
-            d = h_left - i
-            num = 0;
-            k = i*n + j
-
-            vector<int> index // stores indices, in order, of the pixels that our ray intersects
-            vector<double> area // stores the areas, in order, of the pixels that our ray intersects
-            //each value in area corresponds to the pixel at the same location in index
-
-            for (; j < n; j++) {
-                index[num] = k
-                k += 1
-                area[num] = d*delta
-                num += 1
-            }
-            return num
-        */
-            double h_left = (sourcePos.second*subjectResolution) + D;                                 // height of intersect of left wall from bottom
-            int i = subjectResolution - 1 - floor(h_left / delta); // row index
-            double d = h_left - floor(h_left / delta);                                 // distance
-            int num = 0;                                           // Counter for number of pixels the ray intersects
-            int k = i * subjectResolution;                         // index
+            double h_left = (sourcePos.second * subjectResolution) + D; // height of intersect of left wall from bottom
+            int i = subjectResolution - 1 - floor(h_left / delta);      // row index
+            double d = h_left - floor(h_left / delta);                  // distance
+            int num = 0;                                                // Counter for number of pixels the ray intersects
+            int k = i * subjectResolution;                              // index
 
             for (int j = 0; j < subjectResolution; j++)
             {
-                A[k] = d*delta;
+                A[k] = d * delta;
                 kList.push_back(k);
                 jList.push_back(j);
                 iList.push_back(i);
@@ -341,6 +296,9 @@ group2 = [group2Start, group2End] //intersects both upper and lower lines
         // b = y-intercept of line, in units of pixels
         // c = x intercept of line, in units of pixels
         // D = radius of subject, which is a 1x1 square, so D = 0.5, but this is on the units of pixels, not the whole area, so 0.5 * subjectResolution
+        // h_left = height of intersect of left wall, from bottom (in pixels) = -m*D + b + D
+        // w_bot = width of intersect of bottom wall from left (in pixels) = -(1/m)*D + c + D
+        // k = i*n + j
 
         // TODO if -1 > m > 1
         // NOT SURE, NEEDS TESTING
@@ -348,73 +306,6 @@ group2 = [group2Start, group2End] //intersects both upper and lower lines
         // when <increasing/decreasing> <i/j> to <0/n>, invert it to <increasing/decreasing> <j/i> to <n/0>
         // to convert k out of inverted coordinatesk = k <+/-> <n/1> --> k = k <-/+> <i/n>
         // k = (n-1-j)*n + (n-1-i)
-
-        // h_left = height of intersect of left wall, from bottom (in pixels) = -m*D + b + D
-        // w_bot = width of intersect of bottom wall from left (in pixels) = -(1/m)*D + c + D
-        // k = i*n + j
-
-        //"pixel traversing and line-pixel intersection areas calculation algorithm"
-        // OUTPUT: # of pixels intersected by line, their indices, and the area *under* the ray for that pixel
-        /*
-        vector<int> index // stores indices, in order, of the pixels that our ray intersects
-        vector<double> area // stores the areas, in order, of the pixels that our ray intersects
-        //each value in area corresponds to the pixel at the same location in index
-
-        num = 0 //counter for number of pixels the ray intersects
-
-        // case for 0 < m < 1
-
-        if i == n - 1    // if start is bottom wall
-            d -= delta
-            index[num] = k
-            k += 1
-            area[num] = S4
-            num += 1
-            j += 1
-
-        while i >= 0 and j < n {
-            d += m*delta
-            if d > delta {
-                d -= delta
-                index[num] = k
-                area[num] = S3
-                num += 1
-                i -= 1
-                k -= n
-                if i >= 0 { //while not run out of horizontal room yet
-                    index[num] = k
-                    area[num] = S4
-                    num += 1
-                    j += 1
-                    k += 1
-                }
-                else {
-                    return num
-                }
-            }
-            else if d < delta {
-                index[num] = k
-                area[num] = S1
-                num += 1
-                j += 1
-                k += 1
-            }
-            else {
-                d = 0
-                index[num] = k
-                area[num] = S1
-                j += 1
-                i -= 1
-                k = k - n + 1
-                num += 1
-            }
-        }
-        return num
-
-
-        // for -1 < m < 0: repeat the above 0 < m < 1 case but anything involving j and k is switched from j increasing to approach n, to j decreasing to approach 0
-
-        */
 
         else if (abs(slope) <= 1)
         { // -1 <= slope <= 1
@@ -424,7 +315,7 @@ group2 = [group2Start, group2End] //intersects both upper and lower lines
 
                 // Calculate the height of intersect of left wall
                 double h_left = (-1 * slope * D) + b + D;
- 
+
                 int i, j;
                 double d;
 
@@ -444,12 +335,12 @@ group2 = [group2Start, group2End] //intersects both upper and lower lines
 
                     i = subjectResolution - 1; // bottom row
                     j = floor(w_bot / delta);
-                    d = slope*(1 - (w_bot - j));
+                    d = slope * (1 - (w_bot - j));
 
                     // insert first triangle and move to next pixel so starting loop intersecting a vertical boundary
                     // like the left wall case
-                    A[i*subjectResolution + j] = d*d/slope/2;
-                    kList.push_back(i*subjectResolution + j);
+                    A[i * subjectResolution + j] = d * d / slope / 2;
+                    kList.push_back(i * subjectResolution + j);
                     jList.push_back(j);
                     iList.push_back(i);
                     num += 1;
@@ -534,10 +425,10 @@ group2 = [group2Start, group2End] //intersects both upper and lower lines
                     double w_bot = (-1 * (1.0f / slope) * D) + c + D;
                     i = subjectResolution - 1; // bottom row
                     j = floor(w_bot / delta);
-                    d = -1 * slope*(w_bot - j);
+                    d = -1 * slope * (w_bot - j);
 
-                    A[i*subjectResolution + j] = d*d/slope/-2;
-                    kList.push_back(i*subjectResolution + j);
+                    A[i * subjectResolution + j] = d * d / slope / -2;
+                    kList.push_back(i * subjectResolution + j);
                     jList.push_back(j);
                     iList.push_back(i);
                     num += 1;
@@ -545,11 +436,11 @@ group2 = [group2Start, group2End] //intersects both upper and lower lines
                 }
 
                 // Traverse along the line until exit
-                
+
                 int k = i * subjectResolution + j;
                 while (i >= 0 && j >= 0)
                 {
-                    d -= slope * delta; //since the line slopes down, reverse up the line
+                    d -= slope * delta; // since the line slopes down, reverse up the line
                     if (d > delta)
                     {
                         d -= delta;
