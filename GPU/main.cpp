@@ -11,7 +11,6 @@
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 // settings
 const unsigned int SCR_WIDTH = 500;
@@ -55,9 +54,6 @@ int main()
 
     // // GLEW: load all OpenGL function pointers
     glewInit();
-
-    // Register Key Callbacks
-    glfwSetKeyCallback(window, key_callback);
 
     // build and compile the shaders
     // ------------------------------------
