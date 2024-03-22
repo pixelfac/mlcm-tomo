@@ -16,19 +16,13 @@ void processInput(GLFWwindow *window);
 const unsigned int SCR_WIDTH = 500;
 const unsigned int SCR_HEIGHT = 500;
 
-const char *vertexShaderSource = importVertexShader("fanbeam");
 
-const char *fragmentShaderSource = "#version 330 core\n"
-    "out vec4 FragColor;\n"
-    "uniform sampler2D texture1;\n"
-    "void main()\n"
-    "{\n"
-    "   FragColor = texture(texture1, TexCoord);\n"
-    "}\n\0";
-    
 
 int main()
 {
+    const char *vertexShaderSource = importVertexShader("fanbeam");
+    const char *fragmentShaderSource = importFragmentShader("fanbeam");
+
     // glfw: initialize and configure
     // ------------------------------
     glfwInit();
@@ -99,16 +93,12 @@ int main()
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
     float vertices[] = {
-        // positions          // colors           // texture coords
-         0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
-         0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
-        -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
-        -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
+        // positions       
+         0.5f,  0.5f, 0.0f,
+         0.5f, -0.5f, 0.0f,
+        -0.5f, -0.5f, 0.0f,
     };
-    unsigned int indices[] = {  
-        0, 1, 3, // first triangle
-        1, 2, 3  // second triangle
-    };
+
     unsigned int VBO, VAO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -119,7 +109,7 @@ int main()
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
 
@@ -135,25 +125,6 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-    // Create the image (RGB Array) to be displayed
-    unsigned char* frame = new unsigned char[PX_WIDTH*PX_HEIGHT*3];
-
-    unsigned char *data = &frame[0];
-    if (data)
-    {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, PX_WIDTH, PX_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    }
-    else
-    {
-        std::cout << "Failed to load texture" << std::endl;
-    }
-
-    //clean up memory
-    delete[] frame;
-   
-
-
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))
@@ -167,30 +138,10 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        // Create the image (RGB Array) to be displayed
-        unsigned char* frame = new unsigned char[PX_WIDTH*PX_HEIGHT*3];
-
-        unsigned char *data = &frame[0];
-        if (data)
-        {
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, PX_WIDTH, PX_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-            glGenerateMipmap(GL_TEXTURE_2D);
-        }
-        else
-        {
-            std::cout << "Failed to load texture" << std::endl;
-        }
-
-        //clean up memory
-        delete[] frame;
-
-        // bind Texture
-        glBindTexture(GL_TEXTURE_2D, texture);
-
         // render container
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
