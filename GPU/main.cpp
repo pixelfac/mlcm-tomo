@@ -125,7 +125,7 @@ int main()
 
         // render
         // ------
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
         // render container
@@ -138,10 +138,28 @@ int main()
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
+        //read pixels
+        float* pixels = new float[PX_HEIGHT*PX_WIDTH * 4];
+        for (int i = 0; i < 4; i++) {
+            std::cout << pixels[i] << std::endl;
+        }
+        std::cout << std::endl;
+
+        glReadPixels(0, 0, PX_WIDTH, PX_HEIGHT, GL_RGBA, GL_FLOAT, pixels);
+
+        for (int i = 0; i < PX_HEIGHT*PX_WIDTH*4; i++) {
+            if (pixels[i] != 0) {
+                std::cout << pixels[i] << std::endl;
+            }
+        }
+        std::cout << std::endl;
+
+        delete[] pixels;
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
         glfwPollEvents();
+        break;
     }
 
     // optional: de-allocate all resources once they've outlived their purpose:
