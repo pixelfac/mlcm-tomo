@@ -7,7 +7,7 @@
 
 
 #define PX_HEIGHT 512   // # of pixels screen is tall. keep it in powers of 2!
-#define PX_WIDTH 256     // # of pixels screen is wide. keep it in powers of 2!
+#define PX_WIDTH 512     // # of pixels screen is wide. keep it in powers of 2!
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
@@ -128,6 +128,8 @@ int main()
 
         // render container
         glUseProgram(shaderProgram);
+        int subjectResolution = glGetUniformLocation(shaderProgram, "subjectResolution");
+        glUniform1f(subjectResolution, PX_HEIGHT);
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
