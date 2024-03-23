@@ -89,14 +89,16 @@ int main()
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 
+    //init uniform
+    int subjectResolution = glGetUniformLocation(shaderProgram, "subjectResolution");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
     float vertices[] = {
         // positions       
-         0.5f,  0.5f, 0.0f,
-         0.5f, -0.5f, 0.0f,
-        -0.5f, -0.5f, 0.0f,
+        -1.0f,  0.0f, 0.0f,
+         1.0f,  0.5f, 0.0f,
+         1.0f, -0.5f, 0.0f,
     };
 
     unsigned int VBO, VAO;
@@ -128,8 +130,11 @@ int main()
 
         // render container
         glUseProgram(shaderProgram);
-        int subjectResolution = glGetUniformLocation(shaderProgram, "subjectResolution");
+        
+        //update uniform variables
         glUniform1f(subjectResolution, PX_HEIGHT);
+
+        //render triangle
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
