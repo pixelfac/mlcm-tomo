@@ -10,5 +10,5 @@ in vec4 vertexColor; // the input variable from the vertex shader (same name and
 void main()
 {
     vec2 st = gl_FragCoord.xy/subjectResolution;
-	FragColor = vec4(0.0,st.x,st.y,1.0); // vec4(r,g,b,?)
+	FragColor = vec4(0.0,st.x,st.y,0.0); // vec4(r,g,b,?)
 }

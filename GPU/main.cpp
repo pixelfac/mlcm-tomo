@@ -6,15 +6,15 @@
 #include <iostream>
 
 
-#define PX_HEIGHT 512   // # of pixels screen is tall. keep it in powers of 2!
-#define PX_WIDTH 512     // # of pixels screen is wide. keep it in powers of 2!
+#define PX_HEIGHT 128   // # of pixels screen is tall. keep it in powers of 2!
+#define PX_WIDTH 128     // # of pixels screen is wide. keep it in powers of 2!
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
 
 // settings
-const unsigned int SCR_WIDTH = 500;
-const unsigned int SCR_HEIGHT = 500;
+const unsigned int SCR_HEIGHT = PX_HEIGHT;
+const unsigned int SCR_WIDTH = PX_WIDTH;
 
 
 
@@ -140,16 +140,16 @@ int main()
 
         //read pixels
         float* pixels = new float[PX_HEIGHT*PX_WIDTH * 4];
-        for (int i = 0; i < 4; i++) {
-            std::cout << pixels[i] << std::endl;
-        }
-        std::cout << std::endl;
 
         glReadPixels(0, 0, PX_WIDTH, PX_HEIGHT, GL_RGBA, GL_FLOAT, pixels);
 
-        for (int i = 0; i < PX_HEIGHT*PX_WIDTH*4; i++) {
-            if (pixels[i] != 0) {
-                std::cout << pixels[i] << std::endl;
+        for (int i = 0; i < PX_HEIGHT*PX_WIDTH*4; i+=4) {
+            if ((int)pixels[i*4+2] != 0) {
+                std::cout << i << '\t';
+                std::cout << (unsigned int)(pixels[i*4] * PX_HEIGHT) << '\t';
+                std::cout << (unsigned int)(pixels[i*4+1] * PX_HEIGHT) << '\t';
+                std::cout << (unsigned int)(pixels[i*4+2] * PX_HEIGHT) << '\t';
+                std::cout << (unsigned int)(pixels[i*4+3] * PX_HEIGHT) << std::endl;
             }
         }
         std::cout << std::endl;
