@@ -11,6 +11,12 @@ void main()
     vertexID = gl_VertexID;
 }
 
+vec2 rotate(vec2 coord, float radians) {
+    float sinTheta = sin(radians);
+    float cosTheta = cos(radians);
+    return vec2(coord.x * cosTheta - coord.y * sinTheta, coord.x * sinTheta + coord.y * cosTheta);
+}
+
 // TODO
 // update gl_Position based on the current state of the CTScanner
 // using code like GetCurrentSourcePosition() and GetCurrentDetectorPosition() from CTScanner.h
