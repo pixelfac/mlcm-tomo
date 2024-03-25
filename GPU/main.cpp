@@ -7,8 +7,8 @@
 #include <cmath>
 
 
-#define PX_HEIGHT 128  // # of pixels screen is tall. keep it in powers of 2!
-#define PX_WIDTH 128   // # of pixels screen is wide. keep it in powers of 2!
+#define PX_HEIGHT 4  // # of pixels screen is tall. keep it in powers of 2!
+#define PX_WIDTH 4   // # of pixels screen is wide. keep it in powers of 2!
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
@@ -97,9 +97,9 @@ int main()
     // ------------------------------------------------------------------
     float vertices[] = {
         // positions       
-        -1.0f,  1.0f, 0.0f,
-         1.0f, -1.0f, 0.0f,
          1.0f,  1.0f, 0.0f,
+        -1.0f, -1.0f, 0.0f,
+         1.0f, -1.0f, 0.0f,
     };
 
     unsigned int VBO, VAO;
