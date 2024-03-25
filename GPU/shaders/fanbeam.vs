@@ -1,6 +1,12 @@
 #version 330 core
 layout (location = 0) in vec3 aPos; // the position variable has attribute position 0
 
+in float sourceDist;
+in float detectorDist;
+in float detectorPanelWidth;
+in int numDetectors;
+in int views;
+
 out vec4 vertexColor; // specify a color output to the fragment shader
 out float vertexID;
 

@@ -92,6 +92,11 @@ int main()
 
     //init uniform
     int resolution = glGetUniformLocation(shaderProgram, "u_resolution");
+    int sourceDist = glGetUniformLocation(shaderProgram, "u_sourceDist");
+    int detectorDist = glGetUniformLocation(shaderProgram, "u_detectorDist");
+    int views = glGetUniformLocation(shaderProgram, "u_views");
+    int detectorPanelWidth = glGetUniformLocation(shaderProgram, "u_detectorPanelWidth");
+    int numDetectors = glGetUniformLocation(shaderProgram, "u_numDetectors");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
@@ -134,6 +139,11 @@ int main()
         
         //update uniform variables
         glUniform2f(resolution, PX_WIDTH, PX_HEIGHT);
+        glUniform1f(sourceDist, 1.5);
+        glUniform1f(detectorDist, 1.5);
+        glUniform1f(detectorPanelWidth, 1.0);
+        glUniform1i(numDetectors, 2);
+        glUniform1i(views, 1);
 
         //render triangle
         glBindVertexArray(VAO);
