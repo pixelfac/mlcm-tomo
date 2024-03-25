@@ -7,8 +7,8 @@
 #include <cmath>
 
 
-#define PX_HEIGHT 4  // # of pixels screen is tall. keep it in powers of 2!
-#define PX_WIDTH 4     // # of pixels screen is wide. keep it in powers of 2!
+#define PX_HEIGHT 128  // # of pixels screen is tall. keep it in powers of 2!
+#define PX_WIDTH 128   // # of pixels screen is wide. keep it in powers of 2!
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
@@ -91,15 +91,15 @@ int main()
     glDeleteShader(fragmentShader);
 
     //init uniform
-    int subjectResolution = glGetUniformLocation(shaderProgram, "subjectResolution");
+    int resolution = glGetUniformLocation(shaderProgram, "u_resolution");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
     float vertices[] = {
         // positions       
-        -1.0f, -1.0f, 0.0f,
         -1.0f,  1.0f, 0.0f,
          1.0f, -1.0f, 0.0f,
+         1.0f,  1.0f, 0.0f,
     };
 
     unsigned int VBO, VAO;
@@ -133,7 +133,7 @@ int main()
         glUseProgram(shaderProgram);
         
         //update uniform variables
-        glUniform1f(subjectResolution, PX_HEIGHT);
+        glUniform2f(resolution, PX_WIDTH, PX_HEIGHT);
 
         //render triangle
         glBindVertexArray(VAO);
@@ -144,10 +144,10 @@ int main()
 
         glReadPixels(0, 0, PX_WIDTH, PX_HEIGHT, GL_RED, GL_FLOAT, pixels); //starts bottomleft, reads first left-right, then bottom-top
         
-
+        // debugging
         for (int i = 0; i < PX_HEIGHT*PX_WIDTH; i++) {
             std::cout << i << '\t';
-            std::cout << pixels[i] << std::endl; // y coord
+            std::cout << pixels[i] << std::endl;
         }
         std::cout << std::endl;
 
