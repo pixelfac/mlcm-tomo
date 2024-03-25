@@ -4,10 +4,11 @@
 #include "GLFW/glfw3.h"
 #include "importShaders.h"
 #include <iostream>
+#include <cmath>
 
 
-#define PX_HEIGHT 128   // # of pixels screen is tall. keep it in powers of 2!
-#define PX_WIDTH 128     // # of pixels screen is wide. keep it in powers of 2!
+#define PX_HEIGHT 4  // # of pixels screen is tall. keep it in powers of 2!
+#define PX_WIDTH 4     // # of pixels screen is wide. keep it in powers of 2!
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
@@ -96,9 +97,9 @@ int main()
     // ------------------------------------------------------------------
     float vertices[] = {
         // positions       
-        -1.0f,  0.0f, 0.0f,
-         1.0f,  0.5f, 0.0f,
-         1.0f, -0.5f, 0.0f,
+        -1.0f, -1.0f, 0.0f,
+        -1.0f,  1.0f, 0.0f,
+         1.0f, -1.0f, 0.0f,
     };
 
     unsigned int VBO, VAO;
@@ -139,18 +140,14 @@ int main()
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
         //read pixels
-        float* pixels = new float[PX_HEIGHT*PX_WIDTH * 4];
+        float* pixels = new float[PX_HEIGHT*PX_WIDTH];
 
-        glReadPixels(0, 0, PX_WIDTH, PX_HEIGHT, GL_RGBA, GL_FLOAT, pixels);
+        glReadPixels(0, 0, PX_WIDTH, PX_HEIGHT, GL_RED, GL_FLOAT, pixels); //starts bottomleft, reads first left-right, then bottom-top
+        
 
-        for (int i = 0; i < PX_HEIGHT*PX_WIDTH*4; i+=4) {
-            if ((int)pixels[i*4+2] != 0) {
-                std::cout << i << '\t';
-                std::cout << (unsigned int)(pixels[i*4] * PX_HEIGHT) << '\t';
-                std::cout << (unsigned int)(pixels[i*4+1] * PX_HEIGHT) << '\t';
-                std::cout << (unsigned int)(pixels[i*4+2] * PX_HEIGHT) << '\t';
-                std::cout << (unsigned int)(pixels[i*4+3] * PX_HEIGHT) << std::endl;
-            }
+        for (int i = 0; i < PX_HEIGHT*PX_WIDTH; i++) {
+            std::cout << i << '\t';
+            std::cout << pixels[i] << std::endl; // y coord
         }
         std::cout << std::endl;
 
