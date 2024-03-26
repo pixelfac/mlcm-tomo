@@ -19,6 +19,7 @@ flat in vec2 detectorRightPos;
 
 float upper_line_at(float x);
 float lower_line_at(float x);
+vec2 get_point_slope_form(vec2 sourcePos, vec2 detectorPos);
 
 void main()
 {
@@ -54,7 +55,7 @@ float upper_line_at(float x)
     return upperLine.x * x + upperLine.y; // y = mx + b
 }
 
-fupperLineoat lower_line_at(float x)
+float lower_line_at(float x)
 {
     return lowerLine.x * x + lowerLine.y; // y = mx + b
 }
@@ -62,7 +63,7 @@ fupperLineoat lower_line_at(float x)
 vec2 get_point_slope_form(vec2 sourcePos, vec2 detectorPos)
 {
     float slope = (detectorPos.y - sourcePos.y) / (detectorPos.x - sourcePos.x);    // slope
-    float b = (sourcePos.y - slope * sourcePos.x) * u_resolution;                   // y intercept in units of pixels
+    float b = (sourcePos.y - slope * sourcePos.x) * float(u_resolution);                   // y intercept in units of pixels
 
     return vec2(slope, b);
 }
