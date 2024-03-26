@@ -13,13 +13,16 @@ in float vertexID;
 
 in vec2 upper_line; // x is slope, y is intercept
 in vec2 lower_line; // x is slope, y is intercept
+flat in vec2 sourcePos;
+flat in vec2 detectorLeftPos;
+flat in vec2 detectorRightPos;
 
 float upper_line_at(float x);
 float lower_line_at(float x);
 
 void main()
 {
-	FragColor = vec4(vertexID,0.3,0.3,0.5); // vec4(r,g,b,?)
+	FragColor = vec4(sourcePos.x,sourcePos.x,sourcePos.x,0.5); // vec4(r,g,b,a)
 }
 
 float upper_line_at(float x)

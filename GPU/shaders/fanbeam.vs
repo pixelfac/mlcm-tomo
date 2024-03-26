@@ -12,6 +12,9 @@ uniform int detectorNum;
 
 out vec4 vertexColor; // specify a color output to the fragment shader
 out float vertexID;
+flat out vec2 sourcePos;
+flat out vec2 detectorLeftPos;
+flat out vec2 detectorRightPos;
 
 vec2 rotate(vec2 coord, float radians);
 vec2 GetCurrentSourcePosition(int viewNum);
@@ -21,12 +24,15 @@ void main()
 {
     if (gl_VertexID == 0) {
         gl_Position = vec4(GetCurrentSourcePosition(viewNum), 0.0, 1.0);
+        sourcePos = vec2(1.0,1.0);
     }
     else if (gl_VertexID == 1) {
         gl_Position = vec4(GetCurrentDetectorPosition(viewNum, detectorNum).xy, 0.0, 1.0);
+        detectorLeftPos = gl_Position.xy;
     }
     else if (gl_VertexID == 2) {
         gl_Position = vec4(GetCurrentDetectorPosition(viewNum, detectorNum).zw, 0.0, 1.0);
+        detectorRightPos = gl_Position.zw;
     }
     else {
         gl_Position = vec4(aPos, 1.0); // see how we directly give a vec3 to vec4's constructor
@@ -34,9 +40,6 @@ void main()
 
     vertexColor = vec4(0.5, 0.0, 0.0, 1.0); // set the output variable to a dark-red color
     vertexID = gl_VertexID;
-
-    //TODO
-    // output slope and intercept for upper and lower lines to frag shader
 }
 
 vec2 rotate(vec2 coord, float radians)

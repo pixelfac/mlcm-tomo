@@ -7,10 +7,10 @@
 #include <cmath>
 
 
-#define PX_HEIGHT 1024  // # of pixels screen is tall. keep it in powers of 2!
-#define PX_WIDTH 1024   // # of pixels screen is wide. keep it in powers of 2!
+#define PX_HEIGHT 128  // # of pixels screen is tall. keep it in powers of 2!
+#define PX_WIDTH 128   // # of pixels screen is wide. keep it in powers of 2!
 
-#define VIEWS 180 // # of angles around subject that scans are taken
+#define VIEWS 16 // # of angles around subject that scans are taken
 #define DETECTOR_PIXELS 64 // # of discrete pixels on detector panel
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -148,7 +148,7 @@ int main()
         glUniform2f(resolution, PX_WIDTH, PX_HEIGHT);
         glUniform1f(sourceDist, 1.5);
         glUniform1f(detectorDist, 1.5);
-        glUniform1f(detectorPanelWidth, 1.0);
+        glUniform1f(detectorPanelWidth, 2.0);
         glUniform1i(views, VIEWS);
         glUniform1i(viewNum, currView);
         glUniform1i(numDetectors, DETECTOR_PIXELS);
@@ -179,7 +179,7 @@ int main()
             currView++;
 
             if (currView >= VIEWS) {
-               currView = 0;
+                break;
             }
         }
 
