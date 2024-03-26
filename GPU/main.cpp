@@ -7,8 +7,8 @@
 #include <cmath>
 
 
-#define PX_HEIGHT 4  // # of pixels screen is tall. keep it in powers of 2!
-#define PX_WIDTH 4   // # of pixels screen is wide. keep it in powers of 2!
+#define PX_HEIGHT 128  // # of pixels screen is tall. keep it in powers of 2!
+#define PX_WIDTH 128   // # of pixels screen is wide. keep it in powers of 2!
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
@@ -92,11 +92,13 @@ int main()
 
     //init uniform
     int resolution = glGetUniformLocation(shaderProgram, "u_resolution");
-    int sourceDist = glGetUniformLocation(shaderProgram, "u_sourceDist");
-    int detectorDist = glGetUniformLocation(shaderProgram, "u_detectorDist");
-    int views = glGetUniformLocation(shaderProgram, "u_views");
-    int detectorPanelWidth = glGetUniformLocation(shaderProgram, "u_detectorPanelWidth");
-    int numDetectors = glGetUniformLocation(shaderProgram, "u_numDetectors");
+    int sourceDist = glGetUniformLocation(shaderProgram, "sourceDist");
+    int detectorDist = glGetUniformLocation(shaderProgram, "detectorDist");
+    int detectorPanelWidth = glGetUniformLocation(shaderProgram, "detectorPanelWidth");
+    int views = glGetUniformLocation(shaderProgram, "views");
+    int viewNum = glGetUniformLocation(shaderProgram, "viewNum");
+    int numDetectors = glGetUniformLocation(shaderProgram, "numDetectors");
+    int detectorNum = glGetUniformLocation(shaderProgram, "detectorNum");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
@@ -142,8 +144,10 @@ int main()
         glUniform1f(sourceDist, 1.5);
         glUniform1f(detectorDist, 1.5);
         glUniform1f(detectorPanelWidth, 1.0);
-        glUniform1i(numDetectors, 2);
         glUniform1i(views, 1);
+        glUniform1i(viewNum, 1);
+        glUniform1i(numDetectors, 2);
+        glUniform1i(detectorNum, 1);
 
         //render triangle
         glBindVertexArray(VAO);
@@ -155,18 +159,18 @@ int main()
         glReadPixels(0, 0, PX_WIDTH, PX_HEIGHT, GL_RED, GL_FLOAT, pixels); //starts bottomleft, reads first left-right, then bottom-top
         
         // debugging
-        for (int i = 0; i < PX_HEIGHT*PX_WIDTH; i++) {
-            std::cout << i << '\t';
-            std::cout << pixels[i] << std::endl;
-        }
-        std::cout << std::endl;
+        // for (int i = 0; i < PX_HEIGHT*PX_WIDTH; i++) {
+        //     std::cout << i << '\t';
+        //     std::cout << pixels[i] << std::endl;
+        // }
+        // std::cout << std::endl;
 
         delete[] pixels;
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
         glfwPollEvents();
-        break;
+        // break;
     }
 
     // optional: de-allocate all resources once they've outlived their purpose:

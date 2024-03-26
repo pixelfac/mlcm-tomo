@@ -13,7 +13,7 @@ in float vertexID;
 
 void main()
 {
-	FragColor = vec4(vertexID,0.5,0.5,0.5); // vec4(r,g,b,?)
+	FragColor = vec4(vertexID,0.3,0.3,0.5); // vec4(r,g,b,?)
 }
 
 // TODO
