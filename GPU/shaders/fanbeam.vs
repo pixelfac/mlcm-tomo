@@ -54,8 +54,8 @@ vec2 GetCurrentSourcePosition(int viewNum)
 
 vec4 GetCurrentDetectorPosition(int viewNum, int detectorNum)
 {
-    vec2 detectorLeftSide = vec2(0.0, detectorDist);  // leftmost range of this detector pixel
-    vec2 detectorRightSide = vec2(0.0, detectorDist); // rightmost range of this detector pixel
+    vec2 detectorLeftSide = vec2(0.0, -detectorDist);  // leftmost range of this detector pixel
+    vec2 detectorRightSide = vec2(0.0, -detectorDist); // rightmost range of this detector pixel
 
     float detectorWidth = detectorPanelWidth / numDetectors; // width of each individual detector pixel
     detectorLeftSide.x = (detectorWidth * detectorNum) - (detectorPanelWidth / 2);
