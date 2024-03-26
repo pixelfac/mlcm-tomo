@@ -7,8 +7,11 @@
 #include <cmath>
 
 
-#define PX_HEIGHT 128  // # of pixels screen is tall. keep it in powers of 2!
-#define PX_WIDTH 128   // # of pixels screen is wide. keep it in powers of 2!
+#define PX_HEIGHT 1024  // # of pixels screen is tall. keep it in powers of 2!
+#define PX_WIDTH 1024   // # of pixels screen is wide. keep it in powers of 2!
+
+#define VIEWS 180 // # of angles around subject that scans are taken
+#define DETECTOR_PIXELS 64 // # of discrete pixels on detector panel
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
@@ -97,8 +100,10 @@ int main()
     int detectorPanelWidth = glGetUniformLocation(shaderProgram, "detectorPanelWidth");
     int views = glGetUniformLocation(shaderProgram, "views");
     int viewNum = glGetUniformLocation(shaderProgram, "viewNum");
+    int currView = 0;
     int numDetectors = glGetUniformLocation(shaderProgram, "numDetectors");
     int detectorNum = glGetUniformLocation(shaderProgram, "detectorNum");
+    int currDetectorPixel = 0;
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
@@ -144,10 +149,10 @@ int main()
         glUniform1f(sourceDist, 1.5);
         glUniform1f(detectorDist, 1.5);
         glUniform1f(detectorPanelWidth, 1.0);
-        glUniform1i(views, 1);
-        glUniform1i(viewNum, 1);
-        glUniform1i(numDetectors, 2);
-        glUniform1i(detectorNum, 1);
+        glUniform1i(views, VIEWS);
+        glUniform1i(viewNum, currView);
+        glUniform1i(numDetectors, DETECTOR_PIXELS);
+        glUniform1i(detectorNum, currDetectorPixel);
 
         //render triangle
         glBindVertexArray(VAO);
@@ -166,6 +171,18 @@ int main()
         // std::cout << std::endl;
 
         delete[] pixels;
+
+        //update CT Scanner progress
+        currDetectorPixel++;
+        if (currDetectorPixel >= DETECTOR_PIXELS) {
+            currDetectorPixel = 0;
+            currView++;
+
+            if (currView >= VIEWS) {
+               currView = 0;
+            }
+        }
+
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
