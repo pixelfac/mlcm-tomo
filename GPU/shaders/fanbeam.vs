@@ -34,6 +34,9 @@ void main()
 
     vertexColor = vec4(0.5, 0.0, 0.0, 1.0); // set the output variable to a dark-red color
     vertexID = gl_VertexID;
+
+    //TODO
+    // output slope and intercept for upper and lower lines to frag shader
 }
 
 vec2 rotate(vec2 coord, float radians)
@@ -70,14 +73,3 @@ vec4 GetCurrentDetectorPosition(int viewNum, int detectorNum)
 
     return vec4(detectorLeftSide, detectorRightSide);
 }
-
-// TODO
-// update gl_Position based on the current state of the CTScanner
-// using code like GetCurrentSourcePosition() and GetCurrentDetectorPosition() from CTScanner.h
-// determine whether vertex is source, dest_upper, dest_lower using gl_VertexID
-
-// uniform sourceDist
-// uniform views
-// uniform detectorDist
-// uniform detectorPanelWidth
-// uniform numDetectors
