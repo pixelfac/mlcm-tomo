@@ -9,7 +9,6 @@ layout(location = 0) out vec4 FragColor;
 uniform vec2 u_resolution;
 
 in vec4 vertexColor; // the input variable from the vertex shader (same name and same type)  
-in float vertexID;
 
 in vec2 upper_line; // x is slope, y is intercept
 in vec2 lower_line; // x is slope, y is intercept

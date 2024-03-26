@@ -11,7 +11,6 @@ uniform int numDetectors;
 uniform int detectorNum;
 
 out vec4 vertexColor; // specify a color output to the fragment shader
-out float vertexID;
 flat out vec2 sourcePos;
 flat out vec2 detectorLeftPos;
 flat out vec2 detectorRightPos;
@@ -39,7 +38,6 @@ void main()
     }
 
     vertexColor = vec4(0.5, 0.0, 0.0, 1.0); // set the output variable to a dark-red color
-    vertexID = gl_VertexID;
 }
 
 vec2 rotate(vec2 coord, float radians)
