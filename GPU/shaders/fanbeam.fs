@@ -39,50 +39,140 @@ void main()
         lowerLine = get_point_slope_form(sourcePos, detectorLeftPos);
     }
 
-
+    float areaTotal = 0;
 
     //if slopes have same sign
     if ((upperLine.x>=0) == (lowerLine.x>=0))
     {
         //get area under upper line, bounded by top wall of pixel
         //calc total area under line, from pixelLeft to pixelRight
+        int lineAtLeft = upper_line_at(pixelLeft);
+        int lineAtRight = upper_line_at(pixelRight);
+        areaTotalUpper = float(lineAtLeft + lineAtRight) * 0.5;
 
         //if intersect pixelTop
+        if (lineAtLeft - pixelTop != lineAtRight - pixelTop)
+        {
             //if positive slope
+            if (upperLine.x >= 0)
+            {
                 //find area of triangle between pixelTopRight, line@pixelRight, and intersectTop
-                //Atop = (line@pixelRight - pixelTop) * (pixelRight - intersectTop.x) * 0.5;
+                //compute intersection point
+                // x = (y-b)/m
+                float intersectionPt = (pixelTop - upperLine.y) / upperLine.x;
+                //subtract triangle area
+                areaTotalUpper -= (lineAtRight - pixelTop) * (pixelRight - intersectionPt) * 0.5;
+            }
             //if negative slope
+            else
+            {
                 //find area of triangle between pixelTopLeft, line@pixelLeft, and intersectTop
-                //Atop = (line@pixelLeft - pixelTop) * (intersectTop.x - pixelLeft) * 0.5;
-            //total area - Atop
+                //compute intersection point
+                // x = (y-b)/m
+                float intersectionPt = (pixelTop - upperLine.y) / upperLine.x;
+                //subtract triangle area
+                areaTotalUpper -= (lineAtLeft - pixelTop) * (intersectionPt - pixelLeft) * 0.5;
+            }
+        }
+        //if line is completely over pixel
+        else if (lineAtLeft - pixelTop > 0 || lineAtRight - pixelTop > 0)
+        {
+            areaTotalUpper = pixelTop; // area_rectangle = w*h, but width is 1, so area = h
+        }
 
         //if intersect PixelBottom
+        if (lineAtLeft - pixelBottom != lineAtRight - pixelBottom)
+        {
             //if positive slope
+            if (upperLine.x >= 0)
+            {
                 //find area of triangle between pixelBotLeft, line@pixelLeft, and intersectBot
+                //compute intersection point
+                // x = (y-b)/m
+                float intersectionPt = (pixelBottom - upperLine.y) / upperLine.x;
                 //Abot = (pixelBot - line@pixelLeft) * (intersectBot.x - pixelLeft) * 0.5;
+                areaTotalUpper -= (pixelBottom - lineAtLeft) * (intersectionPt - pixelLeft) * 0.5;
+            }
             //if negative slope
+            else
+            {
                 //find area of triangle between pixelBotRight, line@pixelRight, and intersectBot
+                //compute intersection point
+                // x = (y-b)/m
+                float intersectionPt = (pixelBottom - upperLine.y) / upperLine.x;
                 //Abot = (pixelBot - line@pixelRight) * (pixelRight - intersectBot.x) * 0.5;
-            //total area + Abot
+                areaTotalUpper -= (pixelBottom - lineAtRight) * (pixelRight - intersectionPt) * 0.5;
+            }
+        }
 
         //get area under lower line, bounded by bottom wall of pixel
+        lineAtLeft = lower_line_at(pixelLeft);
+        lineAtRight = lower_line_at(pixelRight);
+        areaTotalLower = float(lineAtLeft + lineAtRight) * 0.5;
+
+        //if intersect pixelTop
+        if (lineAtLeft - pixelTop != lineAtRight - pixelTop)
+        {
+            //if positive slope
+            if (lowerLine.x >= 0)
+            {
+                //find area of triangle between pixelTopRight, line@pixelRight, and intersectTop
+                //compute intersection point
+                // x = (y-b)/m
+                float intersectionPt = (pixelTop - lowerLine.y) / lowerLine.x;
+                //subtract triangle area
+                areaTotalLower -= (lineAtRight - pixelTop) * (pixelRight - intersectionPt) * 0.5;
+            }
+            //if negative slope
+            else
+            {
+                //find area of triangle between pixelTopLeft, line@pixelLeft, and intersectTop
+                //compute intersection point
+                // x = (y-b)/m
+                float intersectionPt = (pixelTop - lowerLine.y) / lowerLine.x;
+                //subtract triangle area
+                areaTotalLower -= (lineAtLeft - pixelTop) * (intersectionPt - pixelLeft) * 0.5;
+            }
+        }
+
+        //if intersect PixelBottom
+        if (lineAtLeft - pixelBottom != lineAtRight - pixelBottom)
+        {
+            //if positive slope
+            if (lowerLine.x >= 0)
+            {
+                //find area of triangle between pixelBotLeft, line@pixelLeft, and intersectBot
+                //compute intersection point
+                // x = (y-b)/m
+                float intersectionPt = (pixelBottom - lowerLine.y) / lowerLine.x;
+                //Abot = (pixelBot - line@pixelLeft) * (intersectBot.x - pixelLeft) * 0.5;
+                areaTotalLower -= (pixelBottom - lineAtLeft) * (intersectionPt - pixelLeft) * 0.5;
+            }
+            //if negative slope
+            else
+            {
+                //find area of triangle between pixelBotRight, line@pixelRight, and intersectBot
+                //compute intersection point
+                // x = (y-b)/m
+                float intersectionPt = (pixelBottom - lowerLine.y) / lowerLine.x;
+                //Abot = (pixelBot - line@pixelRight) * (pixelRight - intersectBot.x) * 0.5;
+                areaTotalLower -= (pixelBottom - lineAtRight) * (pixelRight - intersectionPt) * 0.5;
+            }
+        }
+        //if line is completely under pixel
+        else if (lineAtLeft - pixelBottom < 0 || lineAtRight - pixelBottom < 0)
+        {
+            areaTotalLower = pixelBottom; // area_rectangle = w*h, but width is 1, so area = h
+        }
+
+        areaTotal = areaTotalUpper - areaTotalLower;
     }
     else
     {
         //special case where neither line is on top of the other
     }
 
-    //if upperLine intersects top wall of pixel
-    // if (upperLeftCorner.y != upperRightCorner.y)
-    // {
-    //     //compute intersection point
-    //     // x = (y-b)/m
-    //     float intersectionPt = (pixelTopLeft.y + upperLine.y) / upperLine.x;
-
-    //     //calculate 
-    // }
-
-	FragColor = vec4(sourcePos.y,detectorLeftPos.y,detectorRightPos.y,0.5); // vec4(r,g,b,a)
+	FragColor = vec4(areaTotal,0.5,0.5,0.5); // vec4(r,g,b,a)
 }
 
 // x is in pixels
