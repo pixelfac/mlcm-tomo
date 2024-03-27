@@ -167,7 +167,8 @@ int main()
 
         //stop timer
         std::chrono::steady_clock::time_point end = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double> duration = end - start;
+        std::chrono::duration<double, std::milli> duration = end - start;
+        // std::cout << duration.count() << " ms" << std::endl;
         totalTime += duration.count();
 
         //read pixels
@@ -203,7 +204,7 @@ int main()
     }
 
     //print timing data
-    std::cout << "Avg Per Draw Call: " << totalTime * 1000 / (VIEWS * DETECTOR_PIXELS) << " ms" << std::endl;
+    std::cout << "Avg Per Draw Call: " << totalTime / (VIEWS * DETECTOR_PIXELS) << " ms" << std::endl;
 
     // optional: de-allocate all resources once they've outlived their purpose:
     // ------------------------------------------------------------------------
