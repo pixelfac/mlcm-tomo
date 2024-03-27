@@ -46,9 +46,9 @@ void main()
     {
         //get area under upper line, bounded by top wall of pixel
         //calc total area under line, from pixelLeft to pixelRight
-        int lineAtLeft = upper_line_at(pixelLeft);
-        int lineAtRight = upper_line_at(pixelRight);
-        areaTotalUpper = float(lineAtLeft + lineAtRight) * 0.5;
+        float lineAtLeft = upper_line_at(pixelLeft);
+        float lineAtRight = upper_line_at(pixelRight);
+        float areaTotalUpper = float(lineAtLeft + lineAtRight) * 0.5;
 
         //if intersect pixelTop
         if (lineAtLeft - pixelTop != lineAtRight - pixelTop)
@@ -108,7 +108,7 @@ void main()
         //get area under lower line, bounded by bottom wall of pixel
         lineAtLeft = lower_line_at(pixelLeft);
         lineAtRight = lower_line_at(pixelRight);
-        areaTotalLower = float(lineAtLeft + lineAtRight) * 0.5;
+        float areaTotalLower = float(lineAtLeft + lineAtRight) * 0.5;
 
         //if intersect pixelTop
         if (lineAtLeft - pixelTop != lineAtRight - pixelTop)
