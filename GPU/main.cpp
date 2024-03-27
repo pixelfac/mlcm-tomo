@@ -5,6 +5,7 @@
 #include "importShaders.h"
 #include <iostream>
 #include <cmath>
+#include <chrono>
 
 
 #define PX_HEIGHT 128  // # of pixels screen is tall. keep it in powers of 2!
@@ -127,6 +128,9 @@ int main()
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
+    //collect timings of draw loop
+    double totalTime = 0;
+
 
     // render loop
     // -----------
@@ -140,6 +144,9 @@ int main()
         // ------
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT);
+
+        //start timer
+        std::chrono::steady_clock::time_point start = std::chrono::high_resolution_clock::now();
 
         // render container
         glUseProgram(shaderProgram);
@@ -157,6 +164,11 @@ int main()
         //render triangle
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        //stop timer
+        std::chrono::steady_clock::time_point end = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> duration = end - start;
+        totalTime += duration.count();
 
         //read pixels
         float* pixels = new float[PX_HEIGHT*PX_WIDTH];
@@ -189,6 +201,9 @@ int main()
         glfwPollEvents();
         // break;
     }
+
+    //print timing data
+    std::cout << "Avg Per Draw Call: " << totalTime * 1000 / (VIEWS * DETECTOR_PIXELS) << " ms" << std::endl;
 
     // optional: de-allocate all resources once they've outlived their purpose:
     // ------------------------------------------------------------------------
