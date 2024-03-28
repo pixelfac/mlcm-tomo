@@ -33,4 +33,3 @@ function maxProjLen = getMaxProjection(r, os, theta, x)
     maxTheta = acosd(minCosTheta);
     maxProjLen = tand(maxTheta) * (r + os) * 2;
 end
-

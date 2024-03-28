@@ -1,7 +1,7 @@
-r = 256 * 4; % the distance from the detector to the origin
-os = 256 * 4; % the distance from the origin to the source
+n = 4096; % is the resolution of the image
+r = n * 4; % the distance from the detector to the origin
+os = n * 4; % the distance from the origin to the source
 thetas = linspace(0, 2*pi, 100); 
-n = 256; % is the resolution of the image
 delta = 0.8;
 
 maxProjLen = (ceil( getMaxProjection(r, os, thetas, n/2) ));

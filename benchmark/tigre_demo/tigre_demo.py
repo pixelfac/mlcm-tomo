@@ -28,10 +28,11 @@ import numpy as np
 from tigre.utilities import sample_loader
 from tigre.utilities import CTnoise
 import tigre.algorithms as algs
+from tigre.utilities import sl3d
+from datetime import datetime
+import sys
 
-def run() -> float:
-    SIZE = 512
-
+def run(size: int, distance: int, detectors: int) -> float:
     #%% 2D Parallel beam
     # VARIABLE                                   DESCRIPTION                    UNITS
 
@@ -44,14 +45,14 @@ def run() -> float:
     # VARIABLE                                   DESCRIPTION                    UNITS
     # -------------------------------------------------------------------------------------
     # Distances
-    geo.DSD = SIZE * 4  # Distance Source Detector      (mm)
-    geo.DSO = SIZE * 4  # Distance Source Origin        (mm)
+    geo.DSD = distance # Distance Source Detector      (mm)
+    geo.DSO = distance # Distance Source Origin        (mm)
     # Image parameters
-    geo.nVoxel = np.array([1, SIZE, SIZE])  # number of voxels              (vx)
-    geo.sVoxel = np.array([1, SIZE, SIZE])  # total size of the image       (mm)
+    geo.nVoxel = np.array([1, size, size])  # number of voxels              (vx)
+    geo.sVoxel = np.array([1, size, size])  # total size of the image       (mm)
     geo.dVoxel = geo.sVoxel / geo.nVoxel  # size of each voxel            (mm)
     # Detector parameters
-    geo.nDetector = np.array([1, SIZE * 2])  # number of pixels              (px)
+    geo.nDetector = np.array([1, detectors])  # number of pixels              (px)
     geo.dDetector = np.array([geo.dVoxel[0], 0.8])  # size of each pixel            (mm)
     geo.sDetector = geo.nDetector * geo.dDetector  # total size of the detector    (mm)
     # Offsets
@@ -59,28 +60,22 @@ def run() -> float:
     geo.offDetector = np.array([0, 0])  # Offset of Detector            (mm)
     # MAKE SURE THAT THE DETECTOR PIXELS SIZE IN V IS THE SAME AS THE IMAGE!
 
-    geo.mode = "cone" # THIS NEEDS TO BE CHANGED BACK TO PARALLEL
-
+    geo.mode = "cone"
     #%% Define angles of projection and load phatom image
     angles = np.linspace(0, 2 * np.pi, 100)
 
-    head = sample_loader.load_head_phantom(geo.nVoxel)
-    # head = np.array([1, 256, 256])
-
-    from tigre.utilities import sl3d
-    shepp = sl3d.shepp_logan_3d(np.array([16, SIZE, SIZE]))
-    head[0] = shepp[5]
+    head = np.zeros((1, size, size), dtype=np.float32)
+    shepp = sl3d.shepp_logan_3d(np.array([16, size, size]))
+    head[0] = shepp[5].astype(np.float32)
 
     # tigre.plotImg(head, dim="z")
 
-    from datetime import datetime
     dt = datetime.now()
-    print(dt)
     projections = tigre.Ax(head, geo, angles)
     dt2 = datetime.now()
     diff = dt2 - dt
-    print(diff)
-    print(diff.microseconds / 1000.0)
+    # print(diff.microseconds / 1000.0)
+    # print(diff.microseconds / 1000.0)
 
     # tigre.plotSinogram(projections, 0)
 
@@ -92,3 +87,20 @@ def run() -> float:
     # tigre.plotimg(np.concatenate([head, imgOSSART, imgCGLS], axis=1), dim="z", slice=0, clims=[0, 0.5])
 
     return diff.microseconds / 1000.0
+
+
+def main(): 
+    n = len(sys.argv)
+    if (n != 4):
+        print(f"Invalid number of arguments {n}", file=sys.stderr)
+        return
+
+    size = int(sys.argv[1])
+    distance = int(sys.argv[2])
+    detectors = int(sys.argv[3])
+   
+    run(size, distance, detectors)
+
+if __name__ == "__main__":
+    main()
+        
