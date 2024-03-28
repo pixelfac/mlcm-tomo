@@ -8,8 +8,8 @@
 #include <chrono>
 
 
-#define PX_HEIGHT 128  // # of pixels screen is tall. keep it in powers of 2!
-#define PX_WIDTH 128   // # of pixels screen is wide. keep it in powers of 2!
+#define PX_HEIGHT 1024  // # of pixels screen is tall. keep it in powers of 2!
+#define PX_WIDTH 1024   // # of pixels screen is wide. keep it in powers of 2!
 
 #define VIEWS 16 // # of angles around subject that scans are taken
 #define DETECTOR_PIXELS 64 // # of discrete pixels on detector panel

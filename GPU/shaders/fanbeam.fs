@@ -170,6 +170,7 @@ void main()
     else
     {
         //special case where neither line is on top of the other
+        //this will only ever show up in the corners of the image soemtimes maybe, for most resolution scales, so it is not really worth implementing
     }
 
 	FragColor = vec4(areaTotal,0.5,0.5,0.5); // vec4(r,g,b,a)
