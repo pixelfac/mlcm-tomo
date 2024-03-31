@@ -8,19 +8,13 @@
 #include <chrono>
 
 
-#define PX_HEIGHT 1024  // # of pixels screen is tall. keep it in powers of 2!
-#define PX_WIDTH 1024   // # of pixels screen is wide. keep it in powers of 2!
+#define PX_RESOLUTION 1024  // # of pixels screen is tall. keep it in powers of 2!
 
 #define VIEWS 16 // # of angles around subject that scans are taken
 #define DETECTOR_PIXELS 64 // # of discrete pixels on detector panel
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
-
-// settings
-const unsigned int SCR_HEIGHT = PX_HEIGHT;
-const unsigned int SCR_WIDTH = PX_WIDTH;
-
 
 
 int main()
@@ -41,7 +35,7 @@ int main()
 
     // glfw window creation
     // --------------------
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Display RGB Array", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(PX_RESOLUTION, PX_RESOLUTION, "Display RGB Array", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -152,7 +146,7 @@ int main()
         glUseProgram(shaderProgram);
         
         //update uniform variables
-        glUniform2f(resolution, PX_WIDTH, PX_HEIGHT);
+        glUniform2f(resolution, PX_RESOLUTION, PX_RESOLUTION);
         glUniform1f(sourceDist, 1.5);
         glUniform1f(detectorDist, 1.5);
         glUniform1f(detectorPanelWidth, 2.0);
