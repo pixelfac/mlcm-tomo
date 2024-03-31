@@ -166,9 +166,9 @@ int main()
         totalTime += duration.count();
 
         //read pixels
-        float* pixels = new float[PX_HEIGHT*PX_WIDTH];
+        float* pixels = new float[PX_RESOLUTION*PX_RESOLUTION];
 
-        glReadPixels(0, 0, PX_WIDTH, PX_HEIGHT, GL_RED, GL_FLOAT, pixels); //starts bottomleft, reads first left-right, then bottom-top
+        glReadPixels(0, 0, PX_RESOLUTION, PX_RESOLUTION, GL_RED, GL_FLOAT, pixels); //starts bottomleft, reads first left-right, then bottom-top
         
         // debugging
         // for (int i = 0; i < PX_HEIGHT*PX_WIDTH; i++) {
