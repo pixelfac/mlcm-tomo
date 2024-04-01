@@ -8,7 +8,7 @@
 #include <chrono>
 
 
-#define PX_RESOLUTION 1024  // # of pixels screen is tall. keep it in powers of 2!
+#define PX_RESOLUTION 128  // # of pixels screen is tall. keep it in powers of 2!
 
 #define VIEWS 16 // # of angles around subject that scans are taken
 #define DETECTOR_PIXELS 64 // # of discrete pixels on detector panel
@@ -66,8 +66,8 @@ int main()
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, PX_RESOLUTION, PX_RESOLUTION, 0, GL_RGBA, GL_FLOAT, 0);
 
     // Poor filtering. Needed !
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
     // Set "renderedTexture" as our colour attachement #0
     glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, renderedTexture, 0);
@@ -194,8 +194,10 @@ int main()
         //render triangle
         //glBindVertexArray(VAO);
         // Render to our framebuffer
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glViewport(0,0,PX_RESOLUTION, PX_RESOLUTION); // Render on the whole framebuffer, complete from the lower left corner to the upper right
+        glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName); //0 to write to screen, FramebufferName to write to texture
+        int realSreenWidth, realSreenHeight;
+        glfwGetFramebufferSize(window, &realSreenWidth, &realSreenHeight); // high DPI displays may have more pixels, so get px count from screen, not program
+        glViewport(0, 0, realSreenWidth, realSreenHeight); // Render on the whole framebuffer, complete from the lower left corner to the upper right
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
         //stop timer
@@ -204,19 +206,16 @@ int main()
         // std::cout << duration.count() << " ms" << std::endl;
         totalTime += duration.count();
 
-        //read pixels
-        float* pixels = new float[PX_RESOLUTION*PX_RESOLUTION];
-
-        glReadPixels(0, 0, PX_RESOLUTION, PX_RESOLUTION, GL_RED, GL_FLOAT, pixels); //starts bottomleft, reads first left-right, then bottom-top
-        
         // debugging
+        //read pixels
+        // float* pixels = new float[PX_RESOLUTION*PX_RESOLUTION];
+        // glReadPixels(0, 0, PX_RESOLUTION, PX_RESOLUTION, GL_RED, GL_FLOAT, pixels); //starts bottomleft, reads first left-right, then bottom-top
         // for (int i = 0; i < PX_HEIGHT*PX_WIDTH; i++) {
         //     std::cout << i << '\t';
         //     std::cout << pixels[i] << std::endl;
         // }
         // std::cout << std::endl;
-
-        delete[] pixels;
+        // delete[] pixels;
 
         //update CT Scanner progress
         currDetectorPixel++;
