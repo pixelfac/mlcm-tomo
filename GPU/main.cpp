@@ -21,6 +21,7 @@ int main()
 {
     const char *vertexShaderSource = importVertexShader("fanbeam");
     const char *fragmentShaderSource = importFragmentShader("fanbeam");
+    const char *frag2ShaderSource = importFragmentShader("testdoublefrag");
 
     // glfw: initialize and configure
     // ------------------------------
@@ -121,8 +122,34 @@ int main()
         glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
         std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
     }
-    glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
+
+    //load second pass
+    unsigned int frag2Shader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(frag2Shader, 1, &frag2ShaderSource, NULL);
+    glCompileShader(frag2Shader);
+    // check for shader compile errors
+    glGetShaderiv(frag2Shader, GL_COMPILE_STATUS, &success);
+    if (!success)
+    {
+        glGetShaderInfoLog(frag2Shader, 512, NULL, infoLog);
+        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
+    }
+    // link shaders
+    unsigned int shaderProgram2 = glCreateProgram();
+    glAttachShader(shaderProgram2, vertexShader);
+    glAttachShader(shaderProgram2, fragmentShader);
+    glLinkProgram(shaderProgram2);
+    // check for linking errors
+    glGetProgramiv(shaderProgram2, GL_LINK_STATUS, &success);
+    if (!success) {
+        glGetProgramInfoLog(shaderProgram2, 512, NULL, infoLog);
+        std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+    }
+    glDeleteShader(vertexShader);
+    glDeleteShader(frag2Shader);
+
+
 
     //init uniform
     int resolution = glGetUniformLocation(shaderProgram, "u_resolution");
@@ -135,6 +162,8 @@ int main()
     int numDetectors = glGetUniformLocation(shaderProgram, "numDetectors");
     int detectorNum = glGetUniformLocation(shaderProgram, "detectorNum");
     int currDetectorPixel = 0;
+
+    int renderedTargetID = glGetUniformLocation(shaderProgram2, "rendered_texture");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
@@ -199,6 +228,13 @@ int main()
         glfwGetFramebufferSize(window, &realSreenWidth, &realSreenHeight); // high DPI displays may have more pixels, so get px count from screen, not program
         glViewport(0, 0, realSreenWidth, realSreenHeight); // Render on the whole framebuffer, complete from the lower left corner to the upper right
         glDrawArrays(GL_TRIANGLES, 0, 3);
+        //second shader pass
+        glUseProgram(shaderProgram2);
+        glUniform1i(renderedTargetID, renderedTexture);
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0); //0 to write to screen, FramebufferName to write to texture
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
 
         //stop timer
         std::chrono::steady_clock::time_point end = std::chrono::high_resolution_clock::now();
