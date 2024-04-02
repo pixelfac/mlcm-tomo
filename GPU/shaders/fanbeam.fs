@@ -18,9 +18,8 @@ float pixelBottom = floor(gl_FragCoord.y);
 float pixelLeft = floor(gl_FragCoord.x);
 float pixelRight = ceil(gl_FragCoord.x);
 
-flat in vec2 sourcePos;
-flat in vec2 detectorLeftPos;
-flat in vec2 detectorRightPos;
+flat in vec2 positions[3];
+
 
 float upper_line_at(float x);
 float lower_line_at(float x);
@@ -28,15 +27,15 @@ vec2 get_point_slope_form(vec2 sourcePos, vec2 detectorPos);
 
 void main()
 {
-    if (detectorLeftPos.y > detectorRightPos.y) // if left side is higher than right side
+    if (positions[1].y > positions[2].y) // if left side is higher than right side
     {
-        upperLine = get_point_slope_form(sourcePos, detectorLeftPos);
-        lowerLine = get_point_slope_form(sourcePos, detectorRightPos);
+        upperLine = get_point_slope_form(positions[0], positions[1]);
+        lowerLine = get_point_slope_form(positions[0], positions[2]);
     }
     else
     {
-        upperLine = get_point_slope_form(sourcePos, detectorRightPos);
-        lowerLine = get_point_slope_form(sourcePos, detectorLeftPos);
+        upperLine = get_point_slope_form(positions[0], positions[2]);
+        lowerLine = get_point_slope_form(positions[0], positions[1]);
     }
 
     float areaTotal = 0;
@@ -173,7 +172,7 @@ void main()
         //this will only ever show up in the corners of the image soemtimes maybe, for most resolution scales, so it is not really worth implementing
     }
 
-	FragColor = vec4(areaTotal,0.5,0.5,0.5); // vec4(r,g,b,a)
+	FragColor = vec4(positions[1].y,positions[1].y,positions[1].y,0.5); // vec4(r,g,b,a)
 }
 
 // x is in pixels

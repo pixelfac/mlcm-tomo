@@ -11,9 +11,7 @@ uniform int numDetectors;
 uniform int detectorNum;
 
 out vec4 vertexColor; // specify a color output to the fragment shader
-flat out vec2 sourcePos;
-flat out vec2 detectorLeftPos;
-flat out vec2 detectorRightPos;
+flat out vec2 positions[3] = vec2[3](vec2(1.0),vec2(1.0),vec2(1.0));
 
 vec2 rotate(vec2 coord, float radians);
 vec2 GetCurrentSourcePosition(int viewNum);
@@ -23,15 +21,15 @@ void main()
 {
     if (gl_VertexID == 0) {
         gl_Position = vec4(GetCurrentSourcePosition(viewNum), 0.0, 1.0);
-        sourcePos = vec2(1.0,1.0);
+        positions[0] = vec2(1.0,1.0);
     }
     else if (gl_VertexID == 1) {
         gl_Position = vec4(GetCurrentDetectorPosition(viewNum, detectorNum).xy, 0.0, 1.0);
-        detectorLeftPos = gl_Position.xy;
+        positions[1] = gl_Position.xy;
     }
     else if (gl_VertexID == 2) {
         gl_Position = vec4(GetCurrentDetectorPosition(viewNum, detectorNum).zw, 0.0, 1.0);
-        detectorRightPos = gl_Position.zw;
+        positions[2] = gl_Position.zw;
     }
     else {
         gl_Position = vec4(aPos, 1.0); // see how we directly give a vec3 to vec4's constructor
