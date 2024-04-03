@@ -16,7 +16,10 @@ float pixelBottom = floor(gl_FragCoord.y);
 float pixelLeft = floor(gl_FragCoord.x);
 float pixelRight = ceil(gl_FragCoord.x);
 
+uniform int numDetectors;
+
 flat in vec2 positions[3];
+
 
 float upper_line_at(float x);
 float lower_line_at(float x);

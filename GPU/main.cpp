@@ -8,10 +8,10 @@
 #include <chrono>
 
 
-#define PX_RESOLUTION 1024  // # of pixels screen is tall. keep it in powers of 2!
+#define PX_RESOLUTION 128  // # of pixels screen is tall. keep it in powers of 2!
 
-#define VIEWS 200 // # of angles around subject that scans are taken
-#define DETECTOR_PIXELS 4 // # of discrete pixels on detector panel
+#define VIEWS 16 // # of angles around subject that scans are taken
+#define DETECTOR_PIXELS 64 // # of discrete pixels on detector panel
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
@@ -244,7 +244,7 @@ int main()
         //render triangle
         // glBindVertexArray(VAO);
         // Render to our framebuffer
-        glBindFramebuffer(GL_FRAMEBUFFER, 0); //0 to write to screen, FramebufferName to write to texture
+        glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName); //0 to write to screen, FramebufferName to write to texture
         int realSreenWidth, realSreenHeight;
         glfwGetFramebufferSize(window, &realSreenWidth, &realSreenHeight); // high DPI displays may have more pixels, so get px count from screen, not program
         glViewport(0, 0, realSreenWidth, realSreenHeight); // Render on the whole framebuffer, complete from the lower left corner to the upper right
@@ -288,7 +288,8 @@ int main()
     }
 
     //print timing data
-    std::cout << "Avg Per Draw Call: " << totalTime / (VIEWS) << " ms" << std::endl;
+    std::cout << "Total Time: " << totalTime << " ms" << std::endl;
+    std::cout << "Avg Per Primitive: " << totalTime / (VIEWS*DETECTOR_PIXELS) << " ms" << std::endl;
 
     // optional: de-allocate all resources once they've outlived their purpose:
     // ------------------------------------------------------------------------
