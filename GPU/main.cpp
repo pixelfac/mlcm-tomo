@@ -249,7 +249,7 @@ int main()
         glUniform1i(detectorNum, currDetectorPixel);
 
         //render triangle
-        //glBindVertexArray(VAO);
+        // glBindVertexArray(VAO);
         // Render to our framebuffer
         glBindFramebuffer(GL_FRAMEBUFFER, 0); //0 to write to screen, FramebufferName to write to texture
         int realSreenWidth, realSreenHeight;
@@ -257,11 +257,11 @@ int main()
         glViewport(0, 0, realSreenWidth, realSreenHeight); // Render on the whole framebuffer, complete from the lower left corner to the upper right
         glDrawArrays(GL_TRIANGLES, 0, 3);
         //second shader pass
-        glUseProgram(shaderProgram2);
-        glUniform1i(renderedTargetID, renderedTexture);
+        // glUseProgram(shaderProgram2);
+        // glUniform1i(renderedTargetID, renderedTexture);
 
-        glBindFramebuffer(GL_FRAMEBUFFER, 0); //0 to write to screen, FramebufferName to write to texture
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        // glBindFramebuffer(GL_FRAMEBUFFER, 0); //0 to write to screen, FramebufferName to write to texture
+        // glDrawArrays(GL_TRIANGLES, 0, 3);
 
 
         //stop timer

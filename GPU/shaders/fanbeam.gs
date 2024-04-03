@@ -10,12 +10,15 @@ flat out vec2 positions[3];
 
 void main() {    
     positions[0] = gl_in[0].gl_Position.xy;
+    gl_Position = gl_in[0].gl_Position;
     EmitVertex();
 
     positions[1] = gl_in[1].gl_Position.xy;
+    gl_Position = gl_in[1].gl_Position;
     EmitVertex();
 
     positions[2] = gl_in[2].gl_Position.xy;
+    gl_Position = gl_in[2].gl_Position;
     EmitVertex();
     
     EndPrimitive();
