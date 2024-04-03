@@ -151,7 +151,7 @@ int main()
     if (!success)
     {
         glGetShaderInfoLog(vert2Shader, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+        std::cout << "ERROR::SHADER::VERTEX2::COMPILATION_FAILED\n" << infoLog << std::endl;
     }
     unsigned int frag2Shader = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(frag2Shader, 1, &frag2ShaderSource, NULL);
