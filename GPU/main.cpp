@@ -8,10 +8,10 @@
 #include <chrono>
 
 
-#define PX_RESOLUTION 128  // # of pixels screen is tall. keep it in powers of 2!
+#define PX_RESOLUTION 1024  // # of pixels screen is tall. keep it in powers of 2!
 
-#define VIEWS 16 // # of angles around subject that scans are taken
-#define DETECTOR_PIXELS 64 // # of discrete pixels on detector panel
+#define VIEWS 200 // # of angles around subject that scans are taken
+#define DETECTOR_PIXELS 4 // # of discrete pixels on detector panel
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
@@ -189,18 +189,12 @@ int main()
     int currView = 0;
     int numDetectors = glGetUniformLocation(shaderProgram, "numDetectors");
     int detectorNum = glGetUniformLocation(shaderProgram, "detectorNum");
-    int currDetectorPixel = 0;
 
     int renderedTargetID = glGetUniformLocation(shaderProgram2, "rendered_texture");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
-    float vertices[] = {
-        // positions       
-         1.0f,  1.0f, 0.0f,
-        -1.0f, -1.0f, 0.0f,
-         1.0f, -1.0f, 0.0f,
-    };
+    float vertices[3*DETECTOR_PIXELS] = {1.0};
 
     unsigned int VBO, VAO;
     glGenVertexArrays(1, &VAO);
@@ -246,7 +240,6 @@ int main()
         glUniform1i(views, VIEWS);
         glUniform1i(viewNum, currView);
         glUniform1i(numDetectors, DETECTOR_PIXELS);
-        glUniform1i(detectorNum, currDetectorPixel);
 
         //render triangle
         // glBindVertexArray(VAO);
@@ -255,7 +248,7 @@ int main()
         int realSreenWidth, realSreenHeight;
         glfwGetFramebufferSize(window, &realSreenWidth, &realSreenHeight); // high DPI displays may have more pixels, so get px count from screen, not program
         glViewport(0, 0, realSreenWidth, realSreenHeight); // Render on the whole framebuffer, complete from the lower left corner to the upper right
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawArrays(GL_TRIANGLES, 0, 3*DETECTOR_PIXELS);
         //second shader pass
         // glUseProgram(shaderProgram2);
         // glUniform1i(renderedTargetID, renderedTexture);
@@ -282,14 +275,9 @@ int main()
         // delete[] pixels;
 
         //update CT Scanner progress
-        currDetectorPixel++;
-        if (currDetectorPixel >= DETECTOR_PIXELS) {
-            currDetectorPixel = 0;
-            currView++;
-
-            if (currView >= VIEWS) {
-                break;
-            }
+        currView++;
+        if (currView >= VIEWS) {
+            break;
         }
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
@@ -300,7 +288,7 @@ int main()
     }
 
     //print timing data
-    std::cout << "Avg Per Draw Call: " << totalTime / (VIEWS * DETECTOR_PIXELS) << " ms" << std::endl;
+    std::cout << "Avg Per Draw Call: " << totalTime / (VIEWS) << " ms" << std::endl;
 
     // optional: de-allocate all resources once they've outlived their purpose:
     // ------------------------------------------------------------------------

@@ -8,8 +8,6 @@ layout(location = 0) out vec4 FragColor;
 
 uniform vec2 u_resolution;
 
-in vec4 vertexColor; // the input variable from the vertex shader (same name and same type)  
-
 vec2 upperLine;
 vec2 lowerLine;
 
