@@ -20,7 +20,6 @@ float pixelRight = ceil(gl_FragCoord.x);
 
 flat in vec2 positions[3];
 
-
 float upper_line_at(float x);
 float lower_line_at(float x);
 vec2 get_point_slope_form(vec2 sourcePos, vec2 detectorPos);

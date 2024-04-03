@@ -22,7 +22,7 @@ int main()
     const char *vertexShaderSource = importShader("fanbeam.vs");
     const char *geometryShaderSource = importShader("fanbeam.gs");
     const char *fragmentShaderSource = importShader("fanbeam.fs");
-    
+
     const char *frag2ShaderSource = importShader("testdoublefrag.fs");
 
     // glfw: initialize and configure
@@ -110,7 +110,7 @@ int main()
     glGetShaderiv(geometryShader, GL_COMPILE_STATUS, &success);
     if (!success)
     {
-        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+        glGetShaderInfoLog(geometryShader, 512, NULL, infoLog);
         std::cout << "ERROR::SHADER::GEOMETRY::COMPILATION_FAILED\n" << infoLog << std::endl;
     }
     // fragment shader
