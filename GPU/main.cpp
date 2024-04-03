@@ -19,9 +19,11 @@ void processInput(GLFWwindow *window);
 
 int main()
 {
-    const char *vertexShaderSource = importVertexShader("fanbeam");
-    const char *fragmentShaderSource = importFragmentShader("fanbeam");
-    const char *frag2ShaderSource = importFragmentShader("testdoublefrag");
+    const char *vertexShaderSource = importShader("fanbeam.vs");
+    const char *geometryShaderSource = importShader("fanbeam.gs");
+    const char *fragmentShaderSource = importShader("fanbeam.fs");
+    
+    const char *frag2ShaderSource = importShader("testdoublefrag.fs");
 
     // glfw: initialize and configure
     // ------------------------------
@@ -100,6 +102,17 @@ int main()
         glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
         std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
     }
+    // geometry shader
+    unsigned int geometryShader = glCreateShader(GL_GEOMETRY_SHADER);
+    glShaderSource(geometryShader, 1, &geometryShaderSource, NULL);
+    glCompileShader(geometryShader);
+    // check for shader compile errors
+    glGetShaderiv(geometryShader, GL_COMPILE_STATUS, &success);
+    if (!success)
+    {
+        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+        std::cout << "ERROR::SHADER::GEOMETRY::COMPILATION_FAILED\n" << infoLog << std::endl;
+    }
     // fragment shader
     unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
@@ -114,6 +127,7 @@ int main()
     // link shaders
     unsigned int shaderProgram = glCreateProgram();
     glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, geometryShader);
     glAttachShader(shaderProgram, fragmentShader);
     glLinkProgram(shaderProgram);
     // check for linking errors
@@ -122,6 +136,7 @@ int main()
         glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
         std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
     }
+    glDeleteShader(geometryShader);
     glDeleteShader(fragmentShader);
 
     //load second pass
