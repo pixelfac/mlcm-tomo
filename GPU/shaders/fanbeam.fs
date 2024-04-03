@@ -171,7 +171,7 @@ void main()
         //this will only ever show up in the corners of the image soemtimes maybe, for most resolution scales, so it is not really worth implementing
     }
 
-	FragColor = vec4(1.0,1.0,1.0,0.5); // vec4(r,g,b,a)
+	FragColor = vec4(positions[0].y,positions[1].y,positions[2].y,0.5); // vec4(r,g,b,a)
 }
 
 // x is in pixels
