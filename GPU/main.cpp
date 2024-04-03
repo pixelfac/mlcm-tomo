@@ -24,6 +24,7 @@ int main()
     const char *fragmentShaderSource = importShader("fanbeam.fs");
 
     const char *frag2ShaderSource = importShader("testdoublefrag.fs");
+    const char *vert2ShaderSource = importShader("testdoublevert.vs");
 
     // glfw: initialize and configure
     // ------------------------------
@@ -136,10 +137,22 @@ int main()
         glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
         std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
     }
+    glDeleteShader(vertexShader);
     glDeleteShader(geometryShader);
     glDeleteShader(fragmentShader);
 
     //load second pass
+    // vertex shader
+    unsigned int vert2Shader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vert2Shader, 1, &vert2ShaderSource, NULL);
+    glCompileShader(vert2Shader);
+    // check for shader compile errors
+    glGetShaderiv(vert2Shader, GL_COMPILE_STATUS, &success);
+    if (!success)
+    {
+        glGetShaderInfoLog(vert2Shader, 512, NULL, infoLog);
+        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+    }
     unsigned int frag2Shader = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(frag2Shader, 1, &frag2ShaderSource, NULL);
     glCompileShader(frag2Shader);
@@ -148,20 +161,20 @@ int main()
     if (!success)
     {
         glGetShaderInfoLog(frag2Shader, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
+        std::cout << "ERROR::SHADER::FRAGMENT2::COMPILATION_FAILED\n" << infoLog << std::endl;
     }
     // link shaders
     unsigned int shaderProgram2 = glCreateProgram();
-    glAttachShader(shaderProgram2, vertexShader);
-    glAttachShader(shaderProgram2, fragmentShader);
+    glAttachShader(shaderProgram2, vert2Shader);
+    glAttachShader(shaderProgram2, frag2Shader);
     glLinkProgram(shaderProgram2);
     // check for linking errors
     glGetProgramiv(shaderProgram2, GL_LINK_STATUS, &success);
     if (!success) {
         glGetProgramInfoLog(shaderProgram2, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+        std::cout << "ERROR::SHADER::PROGRAM2::LINKING_FAILED\n" << infoLog << std::endl;
     }
-    glDeleteShader(vertexShader);
+    glDeleteShader(vert2Shader);
     glDeleteShader(frag2Shader);
 
 
