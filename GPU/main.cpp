@@ -244,7 +244,7 @@ int main()
         //render triangle
         // glBindVertexArray(VAO);
         // Render to our framebuffer
-        glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName); //0 to write to screen, FramebufferName to write to texture
+        glBindFramebuffer(GL_FRAMEBUFFER, 0); //0 to write to screen, FramebufferName to write to texture
         int realSreenWidth, realSreenHeight;
         glfwGetFramebufferSize(window, &realSreenWidth, &realSreenHeight); // high DPI displays may have more pixels, so get px count from screen, not program
         glViewport(0, 0, realSreenWidth, realSreenHeight); // Render on the whole framebuffer, complete from the lower left corner to the upper right
