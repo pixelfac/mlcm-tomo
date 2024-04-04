@@ -8,6 +8,7 @@ uniform float detectorPanelWidth;
 uniform int views;
 uniform int viewNum;
 uniform int numDetectors;
+uniform int detectorNum;
 
 vec2 rotate(vec2 coord, float radians);
 vec2 GetCurrentSourcePosition(int viewNum);
@@ -15,14 +16,14 @@ vec4 GetCurrentDetectorPosition(int viewNum, int detectorNum);
 
 void main()
 {
-    if (gl_VertexID % 3 == 0) {
+    if (gl_VertexID == 0) {
         gl_Position = vec4(GetCurrentSourcePosition(viewNum), 0.0, 1.0);
     }
-    else if (gl_VertexID % 3 == 1) {
-        gl_Position = vec4(GetCurrentDetectorPosition(viewNum, gl_VertexID / 3).xy, 0.0, 1.0);
+    else if (gl_VertexID == 1) {
+        gl_Position = vec4(GetCurrentDetectorPosition(viewNum, detectorNum).xy, 0.0, 1.0);
     }
-    else if (gl_VertexID % 3 == 2) {
-        gl_Position = vec4(GetCurrentDetectorPosition(viewNum, gl_VertexID / 3).zw, 0.0, 1.0);
+    else if (gl_VertexID == 2) {
+        gl_Position = vec4(GetCurrentDetectorPosition(viewNum, detectorNum).zw, 0.0, 1.0);
     }
     else {
         gl_Position = vec4(aPos, 1.0); // default value
