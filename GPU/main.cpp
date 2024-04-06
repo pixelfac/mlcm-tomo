@@ -23,8 +23,8 @@ int main()
     const char *geometryShaderSource = importShader("fanbeam.gs");
     const char *fragmentShaderSource = importShader("fanbeam.fs");
 
-    const char *frag2ShaderSource = importShader("testdoublefrag.fs");
-    const char *vert2ShaderSource = importShader("testdoublevert.vs");
+    const char *vert2ShaderSource = importShader("dotproduct.vs");
+    const char *frag2ShaderSource = importShader("dotproduct.fs");
 
     // glfw: initialize and configure
     // ------------------------------
@@ -224,6 +224,7 @@ int main()
 
         // render
         // ------
+        //clear screen
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
@@ -246,17 +247,17 @@ int main()
         //render triangle
         // glBindVertexArray(VAO);
         // Render to our framebuffer
-        glBindFramebuffer(GL_FRAMEBUFFER, 0); //0 to write to screen, FramebufferName to write to texture
+        glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName); //0 to write to screen, FramebufferName to write to texture
         int realSreenWidth, realSreenHeight;
         glfwGetFramebufferSize(window, &realSreenWidth, &realSreenHeight); // high DPI displays may have more pixels, so get px count from screen, not program
         glViewport(0, 0, realSreenWidth, realSreenHeight); // Render on the whole framebuffer, complete from the lower left corner to the upper right
         glDrawArrays(GL_TRIANGLES, 0, 3);
         //second shader pass
-        // glUseProgram(shaderProgram2);
-        // glUniform1i(renderedTargetID, renderedTexture);
+        glUseProgram(shaderProgram2);
+        glUniform1i(renderedTargetID, renderedTexture);
 
-        // glBindFramebuffer(GL_FRAMEBUFFER, 0); //0 to write to screen, FramebufferName to write to texture
-        // glDrawArrays(GL_TRIANGLES, 0, 3);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0); //0 to write to screen, FramebufferName to write to texture
+        glDrawArrays(GL_TRIANGLES, 0, 3);
 
 
         //stop timer
