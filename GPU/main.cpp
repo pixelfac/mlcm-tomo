@@ -252,30 +252,23 @@ int main()
         glfwGetFramebufferSize(window, &realSreenWidth, &realSreenHeight); // high DPI displays may have more pixels, so get px count from screen, not program
         glViewport(0, 0, realSreenWidth, realSreenHeight); // Render on the whole framebuffer, complete from the lower left corner to the upper right
         glDrawArrays(GL_TRIANGLES, 0, 3);
+
+
         //second shader pass
         glUseProgram(shaderProgram2);
         glUniform1i(renderedTargetID, renderedTexture);
 
-        glBindFramebuffer(GL_FRAMEBUFFER, 0); //0 to write to screen, FramebufferName to write to texture
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName); //0 to write to screen, FramebufferName to write to texture
+        // glDrawArrays(GL_TRIANGLES, 0, 3);
 
+        // glfw: swap buffers 
+        glfwSwapBuffers(window);
 
         //stop timer
         std::chrono::steady_clock::time_point end = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double, std::milli> duration = end - start;
         // std::cout << duration.count() << " ms" << std::endl;
         totalTime += duration.count();
-
-        // debugging
-        //read pixels
-        // float* pixels = new float[PX_RESOLUTION*PX_RESOLUTION];
-        // glReadPixels(0, 0, PX_RESOLUTION, PX_RESOLUTION, GL_RED, GL_FLOAT, pixels); //starts bottomleft, reads first left-right, then bottom-top
-        // for (int i = 0; i < PX_HEIGHT*PX_WIDTH; i++) {
-        //     std::cout << i << '\t';
-        //     std::cout << pixels[i] << std::endl;
-        // }
-        // std::cout << std::endl;
-        // delete[] pixels;
 
         //update CT Scanner progress
         currDetectorPixel++;
@@ -288,10 +281,9 @@ int main()
             }
         }
 
-        // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-        // -------------------------------------------------------------------------------
-        glfwSwapBuffers(window);
-        glfwPollEvents();
+        // poll IO events (keys pressed/released, mouse moved etc.)
+        // glfwPollEvents();
+
         // break;
     }
 
