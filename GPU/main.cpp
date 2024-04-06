@@ -195,7 +195,7 @@ int main()
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
-    float vertices[3] = {1.0};
+    float vertices[9] = {1.0};
 
     unsigned int VBO, VAO;
     glGenVertexArrays(1, &VAO);
@@ -244,10 +244,8 @@ int main()
         glUniform1i(numDetectors, DETECTOR_PIXELS);
         glUniform1i(detectorNum, currDetectorPixel);
 
-        //render triangle
-        // glBindVertexArray(VAO);
         // Render to our framebuffer
-        glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName); //0 to write to screen, FramebufferName to write to texture
+        glBindFramebuffer(GL_FRAMEBUFFER, 0); //0 to write to screen, FramebufferName to write to texture
         int realSreenWidth, realSreenHeight;
         glfwGetFramebufferSize(window, &realSreenWidth, &realSreenHeight); // high DPI displays may have more pixels, so get px count from screen, not program
         glViewport(0, 0, realSreenWidth, realSreenHeight); // Render on the whole framebuffer, complete from the lower left corner to the upper right
@@ -255,10 +253,10 @@ int main()
 
 
         //second shader pass
-        glUseProgram(shaderProgram2);
-        glUniform1i(renderedTargetID, renderedTexture);
+        // glUseProgram(shaderProgram2);
+        // glUniform1i(renderedTargetID, renderedTexture);
 
-        glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName); //0 to write to screen, FramebufferName to write to texture
+        // glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName); //0 to write to screen, FramebufferName to write to texture
         // glDrawArrays(GL_TRIANGLES, 0, 3);
 
         // glfw: swap buffers 
@@ -282,7 +280,7 @@ int main()
         }
 
         // poll IO events (keys pressed/released, mouse moved etc.)
-        // glfwPollEvents();
+        glfwPollEvents(); //needed to see screen for some reason
 
         // break;
     }
