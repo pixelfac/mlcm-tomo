@@ -191,6 +191,16 @@ int main()
     int detectorNum = glGetUniformLocation(shaderProgram, "detectorNum");
     int currDetectorPixel = 0;
 
+
+    //dot product uniforms
+    int dotsourceDist = glGetUniformLocation(shaderProgram2, "sourceDist");
+    int dotdetectorDist = glGetUniformLocation(shaderProgram2, "detectorDist");
+    int dotdetectorPanelWidth = glGetUniformLocation(shaderProgram2, "detectorPanelWidth");
+    int dotviews = glGetUniformLocation(shaderProgram2, "views");
+    int dotviewNum = glGetUniformLocation(shaderProgram2, "viewNum");
+    int dotnumDetectors = glGetUniformLocation(shaderProgram2, "numDetectors");
+    int dotdetectorNum = glGetUniformLocation(shaderProgram2, "detectorNum");
+
     int renderedTargetID = glGetUniformLocation(shaderProgram2, "rendered_texture");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
@@ -245,7 +255,7 @@ int main()
         glUniform1i(detectorNum, currDetectorPixel);
 
         // Render to our framebuffer
-        glBindFramebuffer(GL_FRAMEBUFFER, 0); //0 to write to screen, FramebufferName to write to texture
+        glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName); //0 to write to screen, FramebufferName to write to texture
         int realSreenWidth, realSreenHeight;
         glfwGetFramebufferSize(window, &realSreenWidth, &realSreenHeight); // high DPI displays may have more pixels, so get px count from screen, not program
         glViewport(0, 0, realSreenWidth, realSreenHeight); // Render on the whole framebuffer, complete from the lower left corner to the upper right
@@ -253,11 +263,19 @@ int main()
 
 
         //second shader pass
-        // glUseProgram(shaderProgram2);
-        // glUniform1i(renderedTargetID, renderedTexture);
+        glUseProgram(shaderProgram2);
+        glUniform1f(dotsourceDist, 1.5);
+        glUniform1f(dotdetectorDist, 1.5);
+        glUniform1f(dotdetectorPanelWidth, 2.0);
+        glUniform1i(dotviews, VIEWS);
+        glUniform1i(dotviewNum, currView);
+        glUniform1i(dotnumDetectors, DETECTOR_PIXELS);
+        glUniform1i(dotdetectorNum, currDetectorPixel);
 
-        // glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName); //0 to write to screen, FramebufferName to write to texture
-        // glDrawArrays(GL_TRIANGLES, 0, 3);
+        glUniform1i(renderedTargetID, renderedTexture);
+
+        glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName); //0 to write to screen, FramebufferName to write to texture
+        glDrawArrays(GL_TRIANGLES, 0, 3);
 
         // glfw: swap buffers 
         glfwSwapBuffers(window);
