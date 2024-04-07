@@ -8,7 +8,7 @@
 #include <chrono>
 
 
-#define PX_RESOLUTION 128  // # of pixels screen is tall. keep it in powers of 2!
+#define PX_RESOLUTION 512  // # of pixels screen is tall. keep it in powers of 2!
 
 #define VIEWS 16 // # of angles around subject that scans are taken
 #define DETECTOR_PIXELS 64 // # of discrete pixels on detector panel
@@ -193,6 +193,7 @@ int main()
 
 
     //dot product uniforms
+    int dotresolution = glGetUniformLocation(shaderProgram2, "u_resolution");
     int dotsourceDist = glGetUniformLocation(shaderProgram2, "sourceDist");
     int dotdetectorDist = glGetUniformLocation(shaderProgram2, "detectorDist");
     int dotdetectorPanelWidth = glGetUniformLocation(shaderProgram2, "detectorPanelWidth");
@@ -264,6 +265,7 @@ int main()
 
         //second shader pass
         glUseProgram(shaderProgram2);
+        glUniform1f(dotresolution, PX_RESOLUTION);
         glUniform1f(dotsourceDist, 1.5);
         glUniform1f(dotdetectorDist, 1.5);
         glUniform1f(dotdetectorPanelWidth, 2.0);
@@ -274,7 +276,7 @@ int main()
 
         glUniform1i(renderedTargetID, renderedTexture);
 
-        glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName); //0 to write to screen, FramebufferName to write to texture
+        glBindFramebuffer(GL_FRAMEBUFFER, 0); //0 to write to screen, FramebufferName to write to texture
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
         // glfw: swap buffers 

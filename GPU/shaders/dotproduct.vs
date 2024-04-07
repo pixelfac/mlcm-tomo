@@ -1,6 +1,8 @@
 #version 330 core
 layout (location = 0) in vec3 aPos; // the position variable has attribute position 0
 
+out vec2 UV;
+
 uniform float sourceDist;
 uniform float detectorDist;
 uniform float detectorPanelWidth;
@@ -28,6 +30,7 @@ void main()
     else {
         gl_Position = vec4(aPos, 1.0); // default value
     }
+    UV = (gl_Position.xy + 1) / 2;
 }
 
 vec2 rotate(vec2 coord, float radians)
