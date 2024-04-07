@@ -6,6 +6,8 @@ precision mediump float;
 
 layout(location = 0) out vec4 FragColor;
 
+layout(origin_upper_left, pixel_center_integer) in vec4 gl_FragCoord;
+
 uniform vec2 u_resolution;
 
 vec2 upperLine;
