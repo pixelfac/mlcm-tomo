@@ -13,6 +13,6 @@ out vec4 color;
 uniform sampler2D renderedTexture;
 
 void main(){
-    // FragColor = texture(renderedTexture, vec2(UV.x, UV.y));
-    FragColor = vec4(UV.x, UV.y, 1.0, 0.0);
+    FragColor = texture(renderedTexture, vec2(UV.x, UV.y));
+    // FragColor = vec4(UV.x, UV.y, 1.0, 0.0);
 }

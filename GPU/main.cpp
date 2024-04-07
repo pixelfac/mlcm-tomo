@@ -264,6 +264,12 @@ int main()
 
 
         //second shader pass
+
+        //clear screen
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        //uniforms
         glUseProgram(shaderProgram2);
         glUniform1f(dotresolution, PX_RESOLUTION);
         glUniform1f(dotsourceDist, 1.5);
@@ -285,7 +291,6 @@ int main()
         //stop timer
         std::chrono::steady_clock::time_point end = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double, std::milli> duration = end - start;
-        // std::cout << duration.count() << " ms" << std::endl;
         totalTime += duration.count();
 
         //update CT Scanner progress
