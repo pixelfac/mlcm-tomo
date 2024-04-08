@@ -67,18 +67,17 @@ int main()
     glBindTexture(GL_TEXTURE_2D, renderedTexture);
 
     // Give an empty image to OpenGL ( the last "0" )
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, PX_RESOLUTION, PX_RESOLUTION, 0, GL_RGBA, GL_FLOAT, 0);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, PX_RESOLUTION, PX_RESOLUTION, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
 
-    // Poor filtering. Needed !
+    // Poor filtering. Still use nearest pixel when texture is magnified or shrunk
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
     // Set "renderedTexture" as our colour attachement #0
     glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, renderedTexture, 0);
 
-    // Set the list of draw buffers.
-    GLenum DrawBuffers[1] = {GL_COLOR_ATTACHMENT0};
-    glDrawBuffers(1, DrawBuffers); // "1" is the size of DrawBuffers
+    // Set the draw buffer.
+    glDrawBuffer(GL_COLOR_ATTACHMENT0);
 
     // Always check that our framebuffer is ok
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
@@ -242,7 +241,7 @@ int main()
         //start timer
         std::chrono::steady_clock::time_point start = std::chrono::high_resolution_clock::now();
 
-        // render container
+        // set active shader
         glUseProgram(shaderProgram);
         
         //update uniform variables
@@ -271,6 +270,7 @@ int main()
 
         //uniforms
         glUseProgram(shaderProgram2);
+
         glUniform1f(dotresolution, PX_RESOLUTION);
         glUniform1f(dotsourceDist, 1.5);
         glUniform1f(dotdetectorDist, 1.5);
@@ -280,6 +280,8 @@ int main()
         glUniform1i(dotnumDetectors, DETECTOR_PIXELS);
         glUniform1i(dotdetectorNum, currDetectorPixel);
 
+        glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, renderedTexture);
         glUniform1i(renderedTargetID, renderedTexture);
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0); //0 to write to screen, FramebufferName to write to texture
