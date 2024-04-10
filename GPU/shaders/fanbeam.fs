@@ -6,7 +6,7 @@ precision mediump float;
 
 layout(location = 0) out vec4 FragColor;
 
-layout(origin_upper_left, pixel_center_integer) in vec4 gl_FragCoord;
+layout(pixel_center_integer) in vec4 gl_FragCoord;
 
 uniform vec2 u_resolution;
 
@@ -172,7 +172,7 @@ void main()
     }
 
 	FragColor = vec4(areaTotal, areaTotal, areaTotal, 1.0); // vec4(r,g,b,a)
-	// FragColor = vec4(1.0);
+	FragColor = vec4(1.0);
 }
 
 // x is in pixels
