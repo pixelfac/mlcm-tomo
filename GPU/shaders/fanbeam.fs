@@ -4,7 +4,7 @@
 precision mediump float;
 #endif
 
-layout(location = 0) out vec4 FragColor;
+out vec4 FragColor;
 
 layout(origin_upper_left, pixel_center_integer) in vec4 gl_FragCoord;
 
@@ -196,10 +196,3 @@ vec2 get_point_slope_form(vec2 sourcePos, vec2 detectorPos)
 
     return vec2(slope, b);
 }
-
-// TODO
-// get corner coords of given pixel
-// func to get y given x,slope,intercept
-// compute area under upper line
-// compute area under lower line
-

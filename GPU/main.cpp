@@ -55,7 +55,7 @@ int main()
     // make render target
     // -------------------------
     // The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
-    GLuint FramebufferName = 0;
+    GLuint FramebufferName;
     glGenFramebuffers(1, &FramebufferName);
     glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);
 
@@ -67,11 +67,11 @@ int main()
     glBindTexture(GL_TEXTURE_2D, renderedTexture);
 
     // Give an empty image to OpenGL ( the last "0" )
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, PX_RESOLUTION, PX_RESOLUTION, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, PX_RESOLUTION, PX_RESOLUTION, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 
     // Poor filtering. Still use nearest pixel when texture is magnified or shrunk
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
     // Set "renderedTexture" as our colour attachement #0
     glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, renderedTexture, 0);
@@ -82,6 +82,7 @@ int main()
     // Always check that our framebuffer is ok
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
     {
+        std::cout << "Framebuffer not correct" << std::endl;
         return 0;
     }
 
@@ -282,7 +283,7 @@ int main()
 
         glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, renderedTexture);
-        glUniform1i(renderedTargetID, renderedTexture);
+        glUniform1i(renderedTargetID, 0);
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0); //0 to write to screen, FramebufferName to write to texture
         glDrawArrays(GL_TRIANGLES, 0, 3);
