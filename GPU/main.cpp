@@ -8,7 +8,7 @@
 #include <chrono>
 
 
-#define PX_RESOLUTION 512  // # of pixels screen is tall. keep it in powers of 2!
+#define PX_RESOLUTION 2048  // # of pixels screen is tall. keep it in powers of 2!
 
 #define VIEWS 16 // # of angles around subject that scans are taken
 #define DETECTOR_PIXELS 64 // # of discrete pixels on detector panel
@@ -234,8 +234,8 @@ int main()
         processInput(window);
 
         //clear screen
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        // glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        // glClear(GL_COLOR_BUFFER_BIT);
 
         //start timer
         std::chrono::steady_clock::time_point start = std::chrono::high_resolution_clock::now();
@@ -254,7 +254,7 @@ int main()
         glUniform1i(detectorNum, currDetectorPixel);
 
         // Render to our framebuffer
-        glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName); //0 to write to screen, FramebufferName to write to texture
+        glBindFramebuffer(GL_FRAMEBUFFER, 0); //0 to write to screen, FramebufferName to write to texture
         int realSreenWidth, realSreenHeight;
         glfwGetFramebufferSize(window, &realSreenWidth, &realSreenHeight); // high DPI displays may have more pixels, so get px count from screen, not program
         glViewport(0, 0, realSreenWidth, realSreenHeight); // Render on the whole framebuffer, complete from the lower left corner to the upper right
@@ -264,27 +264,29 @@ int main()
         //second shader pass
 
         //clear screen
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        // glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        // glClear(GL_COLOR_BUFFER_BIT);
 
-        // uniforms
-        glUseProgram(shaderProgram2);
+        // // uniforms
+        // glUseProgram(shaderProgram2);
 
-        glUniform1f(dotresolution, PX_RESOLUTION);
-        glUniform1f(dotsourceDist, 1.5);
-        glUniform1f(dotdetectorDist, 1.5);
-        glUniform1f(dotdetectorPanelWidth, 2.0);
-        glUniform1i(dotviews, VIEWS);
-        glUniform1i(dotviewNum, currView);
-        glUniform1i(dotnumDetectors, DETECTOR_PIXELS);
-        glUniform1i(dotdetectorNum, currDetectorPixel);
+        // glUniform1f(dotresolution, PX_RESOLUTION);
+        // glUniform1f(dotsourceDist, 1.5);
+        // glUniform1f(dotdetectorDist, 1.5);
+        // glUniform1f(dotdetectorPanelWidth, 2.0);
+        // glUniform1i(dotviews, VIEWS);
+        // glUniform1i(dotviewNum, currView);
+        // glUniform1i(dotnumDetectors, DETECTOR_PIXELS);
+        // glUniform1i(dotdetectorNum, currDetectorPixel);
 
-        glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, renderedTexture);
-        glUniform1i(renderedTargetID, 0);
+        // glActiveTexture(GL_TEXTURE0);
+		// glBindTexture(GL_TEXTURE_2D, renderedTexture);
+        // glUniform1i(renderedTargetID, 0);
 
-        glBindFramebuffer(GL_FRAMEBUFFER, 0); //0 to write to screen, FramebufferName to write to texture
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        // glBindFramebuffer(GL_FRAMEBUFFER, 0); //0 to write to screen, FramebufferName to write to texture
+        // glfwGetFramebufferSize(window, &realSreenWidth, &realSreenHeight); // high DPI displays may have more pixels, so get px count from screen, not program
+        // glViewport(0, 0, realSreenWidth, realSreenHeight); // Render on the whole framebuffer, complete from the lower left corner to the upper right
+        // glDrawArrays(GL_TRIANGLES, 0, 3);
 
         // glfw: swap buffers 
         glfwSwapBuffers(window);
