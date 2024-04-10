@@ -4,7 +4,7 @@
 precision mediump float;
 #endif
 
-out vec4 FragColor;
+layout(location = 0) out vec4 FragColor;
 
 layout(origin_upper_left, pixel_center_integer) in vec4 gl_FragCoord;
 
@@ -18,10 +18,7 @@ float pixelBottom = floor(gl_FragCoord.y);
 float pixelLeft = floor(gl_FragCoord.x);
 float pixelRight = ceil(gl_FragCoord.x);
 
-uniform int numDetectors;
-
 flat in vec2 positions[3];
-
 
 float upper_line_at(float x);
 float lower_line_at(float x);
@@ -174,7 +171,8 @@ void main()
         //this will only ever show up in the corners of the image soemtimes maybe, for most resolution scales, so it is not really worth implementing
     }
 
-	FragColor = vec4(areaTotal, areaTotal, areaTotal,0.5); // vec4(r,g,b,a)
+	FragColor = vec4(areaTotal, areaTotal, areaTotal, 1.0); // vec4(r,g,b,a)
+	// FragColor = vec4(1.0);
 }
 
 // x is in pixels
