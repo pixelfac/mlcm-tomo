@@ -196,9 +196,6 @@ int main()
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        //start timer
-        std::chrono::steady_clock::time_point start = std::chrono::high_resolution_clock::now();
-
         // set active shader
         glUseProgram(shaderProgram);
 

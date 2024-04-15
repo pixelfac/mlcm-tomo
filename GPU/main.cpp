@@ -8,9 +8,9 @@
 #include <chrono>
 
 
-#define PX_RESOLUTION 2048  // # of pixels screen is tall. keep it in powers of 2!
+#define PX_RESOLUTION 512  // # of pixels screen is tall. keep it in powers of 2!
 
-#define VIEWS 16 // # of angles around subject that scans are taken
+#define VIEWS 8 // # of angles around subject that scans are taken
 #define DETECTOR_PIXELS 64 // # of discrete pixels on detector panel
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -260,10 +260,8 @@ int main()
 
         // Render to our framebuffer
         glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName); //0 to write to screen, FramebufferName to write to texture
+        glViewport(0, 0, PX_RESOLUTION, PX_RESOLUTION); // Render on the whole framebuffer, complete from the lower left corner to the upper right
         glClear(GL_COLOR_BUFFER_BIT);
-        int realSreenWidth, realSreenHeight;
-        glfwGetFramebufferSize(window, &realSreenWidth, &realSreenHeight); // high DPI displays may have more pixels, so get px count from screen, not program
-        glViewport(0, 0, realSreenWidth, realSreenHeight); // Render on the whole framebuffer, complete from the lower left corner to the upper right
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
         //second shader pass
@@ -285,6 +283,7 @@ int main()
         glUniform1i(renderedTargetID, 0);
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0); //0 to write to screen, FramebufferName to write to texture
+        int realSreenWidth, realSreenHeight;
         glfwGetFramebufferSize(window, &realSreenWidth, &realSreenHeight); // high DPI displays may have more pixels, so get px count from screen, not program
         glViewport(0, 0, realSreenWidth, realSreenHeight); // Render on the whole framebuffer, complete from the lower left corner to the upper right
         glDrawArrays(GL_TRIANGLES, 0, 3);
