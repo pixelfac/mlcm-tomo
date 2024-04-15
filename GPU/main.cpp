@@ -70,8 +70,8 @@ int main()
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, PX_RESOLUTION, PX_RESOLUTION, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 
     // Poor filtering. Still use nearest pixel when texture is magnified or shrunk
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
     // Set "renderedTexture" as our colour attachement #0
     glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, renderedTexture, 0);
@@ -206,7 +206,12 @@ int main()
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
-    float vertices[9] = {1.0};
+    float vertices[9] = 
+    {
+        1.0, 1.0, 0.0,
+       -1.0,-1.0, 0.0,
+       -1.0, 1.0, 0.0    
+    };
 
     unsigned int VBO, VAO;
     glGenVertexArrays(1, &VAO);
@@ -255,11 +260,11 @@ int main()
 
         // Render to our framebuffer
         glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName); //0 to write to screen, FramebufferName to write to texture
+        glClear(GL_COLOR_BUFFER_BIT);
         int realSreenWidth, realSreenHeight;
         glfwGetFramebufferSize(window, &realSreenWidth, &realSreenHeight); // high DPI displays may have more pixels, so get px count from screen, not program
         glViewport(0, 0, realSreenWidth, realSreenHeight); // Render on the whole framebuffer, complete from the lower left corner to the upper right
         glDrawArrays(GL_TRIANGLES, 0, 3);
-
 
         //second shader pass
 
@@ -305,8 +310,6 @@ int main()
 
         // poll IO events (keys pressed/released, mouse moved etc.)
         glfwPollEvents(); //needed to see screen for some reason
-
-        // break;
     }
 
     //print timing data
