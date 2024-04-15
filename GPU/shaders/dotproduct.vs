@@ -30,7 +30,7 @@ void main()
     else {
         gl_Position = vec4(aPos, 1.0); // default value
     }
-    UV = (gl_Position.xy + 1) / 2;
+    UV = (gl_Position.xy + 1.0) / 2.0;
 }
 
 vec2 rotate(vec2 coord, float radians)
