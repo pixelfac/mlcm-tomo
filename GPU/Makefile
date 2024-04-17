@@ -1,5 +1,5 @@
 APP_NAME = a.out
-C_FILES = ./*.cpp
+C_FILES = ./main.cpp
 
 APP_DEFINES :=
 APP_INCLUDES := -I./GL -I./GLFW -I./GLM -framework OpenGL
