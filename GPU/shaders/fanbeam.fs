@@ -6,7 +6,7 @@ precision mediump float;
 
 layout(location = 0) out vec4 FragColor;
 
-layout(pixel_center_integer) in vec4 gl_FragCoord;
+in vec4 gl_FragCoord;
 
 uniform vec2 u_resolution;
 
@@ -22,19 +22,19 @@ flat in vec2 positions[3];
 
 float upper_line_at(float x);
 float lower_line_at(float x);
-vec2 get_point_slope_form(vec2 sourcePos, vec2 detectorPos);
+vec2 get_slope_intercept_form(vec2 sourcePos, vec2 detectorPos);
 
 void main()
 {
     if (positions[1].y > positions[2].y) // if left side is higher than right side
     {
-        upperLine = get_point_slope_form(positions[0], positions[1]);
-        lowerLine = get_point_slope_form(positions[0], positions[2]);
+        upperLine = get_slope_intercept_form(positions[0], positions[1]);
+        lowerLine = get_slope_intercept_form(positions[0], positions[2]);
     }
     else
     {
-        upperLine = get_point_slope_form(positions[0], positions[2]);
-        lowerLine = get_point_slope_form(positions[0], positions[1]);
+        upperLine = get_slope_intercept_form(positions[0], positions[2]);
+        lowerLine = get_slope_intercept_form(positions[0], positions[1]);
     }
 
     float areaTotal = 0;
@@ -171,26 +171,35 @@ void main()
         //this will only ever show up in the corners of the image soemtimes maybe, for most resolution scales, so it is not really worth implementing
     }
 
-	// FragColor = vec4(areaTotal, areaTotal, areaTotal, 1.0); // vec4(r,g,b,a)
-	FragColor = vec4(1.0);
+	FragColor = vec4(areaTotal, areaTotal, areaTotal, 1.0); // vec4(r,g,b,a)
+	// FragColor = vec4(1.0);
 }
 
 // x is in pixels
 float upper_line_at(float x)
 {
-    return upperLine.x * x + upperLine.y + float(u_resolution * 0.5); // y = mx + b
+    return upperLine.x * x + upperLine.y; // y = mx + b
 }
 
 // x is in pixels
 float lower_line_at(float x)
 {
-    return lowerLine.x * x + lowerLine.y + float(u_resolution * 0.5); // y = mx + b
+    return lowerLine.x * x + lowerLine.y; // y = mx + b
 }
 
-vec2 get_point_slope_form(vec2 sourcePos, vec2 detectorPos)
+vec2 get_slope_intercept_form(vec2 sourcePos, vec2 detectorPos)
 {
     float slope = (detectorPos.y - sourcePos.y) / (detectorPos.x - sourcePos.x);    // slope
-    float b = (sourcePos.y - slope * sourcePos.x) * float(u_resolution);            // y intercept in units of pixels
+    // float b = (sourcePos.y - slope * sourcePos.x + 1.0) * float(u_resolution.x);    // y intercept in units of pixels
+    float b;
+    if (slope == 0) {
+        b = sourcePos.y;
+    }
+    else {
+        float b = (-1 * sourcePos.y / slope + sourcePos.x);
+    }
+
+    b = (b + 1.0) * float(u_resolution.x * 0.5);
 
     return vec2(slope, b);
 }

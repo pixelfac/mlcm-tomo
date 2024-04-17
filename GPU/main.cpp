@@ -10,7 +10,7 @@
 
 #define PX_RESOLUTION 512  // # of pixels screen is tall. keep it in powers of 2!
 
-#define VIEWS 8 // # of angles around subject that scans are taken
+#define VIEWS 16 // # of angles around subject that scans are taken
 #define DETECTOR_PIXELS 64 // # of discrete pixels on detector panel
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
