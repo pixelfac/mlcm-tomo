@@ -8,24 +8,17 @@
 #include <chrono>
 
 
-#define PX_RESOLUTION 512  // # of pixels screen is tall. keep it in powers of 2!
+#define PX_RESOLUTION 512  // # of pixels for each screen dimension. keep it in powers of 2!
 
 #define VIEWS 16 // # of angles around subject that scans are taken
 #define DETECTOR_PIXELS 64 // # of discrete pixels on detector panel
 
+// glfw: whenever the window size changed (by OS or user resize) this callback function executes
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void processInput(GLFWwindow *window);
 
 
 int main()
 {
-    const char *vertexShaderSource = importShader("fanbeam.vs");
-    const char *geometryShaderSource = importShader("fanbeam.gs");
-    const char *fragmentShaderSource = importShader("fanbeam.fs");
-
-    const char *vert2ShaderSource = importShader("dotproduct.vs");
-    const char *frag2ShaderSource = importShader("dotproduct.fs");
-
     // glfw: initialize and configure
     // ------------------------------
     glfwInit();
@@ -38,7 +31,6 @@ int main()
 #endif
 
     // glfw window creation
-    // --------------------
     GLFWwindow* window = glfwCreateWindow(PX_RESOLUTION, PX_RESOLUTION, "Display RGB Array", NULL, NULL);
     if (window == NULL)
     {
@@ -52,9 +44,11 @@ int main()
     // // GLEW: load all OpenGL function pointers
     glewInit();
 
+
     // make render target
+    // code in this section from this page: http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-14-render-to-texture/
     // -------------------------
-    // The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
+    // The framebuffer, which allows us to write shader output to somewhere that's not the screen.
     GLuint FramebufferName;
     glGenFramebuffers(1, &FramebufferName);
     glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);
@@ -66,143 +60,153 @@ int main()
     // "Bind" the newly created texture : all future texture functions will modify this texture
     glBindTexture(GL_TEXTURE_2D, renderedTexture);
 
-    // Give an empty image to OpenGL ( the last "0" )
+    // Give an empty image to OpenGL ( the last NULL means empty image )
+    // we're going to overwrite the image with our shader output
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, PX_RESOLUTION, PX_RESOLUTION, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 
-    // Poor filtering. Still use nearest pixel when texture is magnified or shrunk
+    // Use the nearest pixel to UV coords when drawing texture, if it is stretched or squished
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-    // Set "renderedTexture" as our colour attachement #0
+    // Set "renderedTexture" as colour attachement #0
     glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, renderedTexture, 0);
 
-    // Set the draw buffer.
+    // Set the draw buffer to draw to ColorAttachment0
     glDrawBuffer(GL_COLOR_ATTACHMENT0);
 
-    // Always check that our framebuffer is ok
+    // Check that framebuffer is ok
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
     {
-        std::cout << "Framebuffer not correct" << std::endl;
-        return 0;
+        std::cout << "Framebuffer Initialization not correct" << std::endl;
+        return -1;
     }
 
 
 
     // build and compile the shaders
     // ------------------------------------
+    // read in shader files
+    const char *fanbeamVSSource = importShader("fanbeam.vs");
+    const char *fanbeamGSSource = importShader("fanbeam.gs");
+    const char *fanbeamFSSource = importShader("fanbeam.fs");
+
+    const char *dotproductVSSource = importShader("dotproduct.vs");
+    const char *dotproductFSSource = importShader("dotproduct.fs");
+
     // vertex shader
-    unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
+    unsigned int fanbeamVS = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(fanbeamVS, 1, &fanbeamVSSource, NULL);
+    glCompileShader(fanbeamVS);
     // check for shader compile errors
     int success;
     char infoLog[512];
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+    glGetShaderiv(fanbeamVS, GL_COMPILE_STATUS, &success);
     if (!success)
     {
-        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+        glGetShaderInfoLog(fanbeamVS, 512, NULL, infoLog);
+        std::cout << "ERROR::FANBEAM_SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
     }
     // geometry shader
-    unsigned int geometryShader = glCreateShader(GL_GEOMETRY_SHADER);
-    glShaderSource(geometryShader, 1, &geometryShaderSource, NULL);
-    glCompileShader(geometryShader);
+    unsigned int fanbeamGS = glCreateShader(GL_GEOMETRY_SHADER);
+    glShaderSource(fanbeamGS, 1, &fanbeamGSSource, NULL);
+    glCompileShader(fanbeamGS);
     // check for shader compile errors
-    glGetShaderiv(geometryShader, GL_COMPILE_STATUS, &success);
+    glGetShaderiv(fanbeamGS, GL_COMPILE_STATUS, &success);
     if (!success)
     {
-        glGetShaderInfoLog(geometryShader, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::GEOMETRY::COMPILATION_FAILED\n" << infoLog << std::endl;
+        glGetShaderInfoLog(fanbeamGS, 512, NULL, infoLog);
+        std::cout << "ERROR::FANBEAM_SHADER::GEOMETRY::COMPILATION_FAILED\n" << infoLog << std::endl;
     }
     // fragment shader
-    unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(fragmentShader);
+    unsigned int fanbeamFS = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fanbeamFS, 1, &fanbeamFSSource, NULL);
+    glCompileShader(fanbeamFS);
     // check for shader compile errors
-    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+    glGetShaderiv(fanbeamFS, GL_COMPILE_STATUS, &success);
     if (!success)
     {
-        glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
+        glGetShaderInfoLog(fanbeamFS, 512, NULL, infoLog);
+        std::cout << "ERROR::FANBEAM_SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
     }
     // link shaders
-    unsigned int shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, geometryShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
+    unsigned int fanbeamShaderProgram = glCreateProgram();
+    glAttachShader(fanbeamShaderProgram, fanbeamVS);
+    glAttachShader(fanbeamShaderProgram, fanbeamGS);
+    glAttachShader(fanbeamShaderProgram, fanbeamFS);
+    glLinkProgram(fanbeamShaderProgram);
     // check for linking errors
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+    glGetProgramiv(fanbeamShaderProgram, GL_LINK_STATUS, &success);
     if (!success) {
-        glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+        glGetProgramInfoLog(fanbeamShaderProgram, 512, NULL, infoLog);
+        std::cout << "ERROR::FANBEAM_SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
     }
-    glDeleteShader(vertexShader);
-    glDeleteShader(geometryShader);
-    glDeleteShader(fragmentShader);
+    glDeleteShader(fanbeamVS);
+    glDeleteShader(fanbeamGS);
+    glDeleteShader(fanbeamFS);
 
-    //load second pass
+    //load second pass to compute dot product
     // vertex shader
-    unsigned int vert2Shader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vert2Shader, 1, &vert2ShaderSource, NULL);
-    glCompileShader(vert2Shader);
+    unsigned int dotproductVS = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(dotproductVS, 1, &dotproductVSSource, NULL);
+    glCompileShader(dotproductVS);
     // check for shader compile errors
-    glGetShaderiv(vert2Shader, GL_COMPILE_STATUS, &success);
+    glGetShaderiv(dotproductVS, GL_COMPILE_STATUS, &success);
     if (!success)
     {
-        glGetShaderInfoLog(vert2Shader, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::VERTEX2::COMPILATION_FAILED\n" << infoLog << std::endl;
+        glGetShaderInfoLog(dotproductVS, 512, NULL, infoLog);
+        std::cout << "ERROR::DOT_PRODUCT_SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
     }
-    unsigned int frag2Shader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(frag2Shader, 1, &frag2ShaderSource, NULL);
-    glCompileShader(frag2Shader);
+    unsigned int dotproductFS = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(dotproductFS, 1, &dotproductFSSource, NULL);
+    glCompileShader(dotproductFS);
     // check for shader compile errors
-    glGetShaderiv(frag2Shader, GL_COMPILE_STATUS, &success);
+    glGetShaderiv(dotproductFS, GL_COMPILE_STATUS, &success);
     if (!success)
     {
-        glGetShaderInfoLog(frag2Shader, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::FRAGMENT2::COMPILATION_FAILED\n" << infoLog << std::endl;
+        glGetShaderInfoLog(dotproductFS, 512, NULL, infoLog);
+        std::cout << "ERROR::DOT_PRODUCT_SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
     }
     // link shaders
-    unsigned int shaderProgram2 = glCreateProgram();
-    glAttachShader(shaderProgram2, vert2Shader);
-    glAttachShader(shaderProgram2, frag2Shader);
-    glLinkProgram(shaderProgram2);
+    unsigned int dotproductShaderProgram = glCreateProgram();
+    glAttachShader(dotproductShaderProgram, dotproductVS);
+    glAttachShader(dotproductShaderProgram, dotproductFS);
+    glLinkProgram(dotproductShaderProgram);
     // check for linking errors
-    glGetProgramiv(shaderProgram2, GL_LINK_STATUS, &success);
+    glGetProgramiv(dotproductShaderProgram, GL_LINK_STATUS, &success);
     if (!success) {
-        glGetProgramInfoLog(shaderProgram2, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::PROGRAM2::LINKING_FAILED\n" << infoLog << std::endl;
+        glGetProgramInfoLog(dotproductShaderProgram, 512, NULL, infoLog);
+        std::cout << "ERROR::DOT_PRODUCT_SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
     }
-    glDeleteShader(vert2Shader);
-    glDeleteShader(frag2Shader);
+    glDeleteShader(dotproductVS);
+    glDeleteShader(dotproductFS);
 
 
 
-    //init uniform
-    int resolution = glGetUniformLocation(shaderProgram, "u_resolution");
-    int sourceDist = glGetUniformLocation(shaderProgram, "sourceDist");
-    int detectorDist = glGetUniformLocation(shaderProgram, "detectorDist");
-    int detectorPanelWidth = glGetUniformLocation(shaderProgram, "detectorPanelWidth");
-    int views = glGetUniformLocation(shaderProgram, "views");
-    int viewNum = glGetUniformLocation(shaderProgram, "viewNum");
+    // initialize uniform variables
+    // ---------------------------
+    // fanbeam shader
+    int resolution = glGetUniformLocation(fanbeamShaderProgram, "u_resolution");
+    int sourceDist = glGetUniformLocation(fanbeamShaderProgram, "sourceDist");
+    int detectorDist = glGetUniformLocation(fanbeamShaderProgram, "detectorDist");
+    int detectorPanelWidth = glGetUniformLocation(fanbeamShaderProgram, "detectorPanelWidth");
+    int views = glGetUniformLocation(fanbeamShaderProgram, "views");
+    int viewNum = glGetUniformLocation(fanbeamShaderProgram, "viewNum");
     int currView = 0;
-    int numDetectors = glGetUniformLocation(shaderProgram, "numDetectors");
-    int detectorNum = glGetUniformLocation(shaderProgram, "detectorNum");
+    int numDetectors = glGetUniformLocation(fanbeamShaderProgram, "numDetectors");
+    int detectorNum = glGetUniformLocation(fanbeamShaderProgram, "detectorNum");
     int currDetectorPixel = 0;
 
 
-    //dot product uniforms
-    int dotresolution = glGetUniformLocation(shaderProgram2, "u_resolution");
-    int dotsourceDist = glGetUniformLocation(shaderProgram2, "sourceDist");
-    int dotdetectorDist = glGetUniformLocation(shaderProgram2, "detectorDist");
-    int dotdetectorPanelWidth = glGetUniformLocation(shaderProgram2, "detectorPanelWidth");
-    int dotviews = glGetUniformLocation(shaderProgram2, "views");
-    int dotviewNum = glGetUniformLocation(shaderProgram2, "viewNum");
-    int dotnumDetectors = glGetUniformLocation(shaderProgram2, "numDetectors");
-    int dotdetectorNum = glGetUniformLocation(shaderProgram2, "detectorNum");
-
-    int renderedTargetID = glGetUniformLocation(shaderProgram2, "rendered_texture");
+    //dot product shader
+    int dotresolution = glGetUniformLocation(dotproductShaderProgram, "u_resolution");
+    int dotsourceDist = glGetUniformLocation(dotproductShaderProgram, "sourceDist");
+    int dotdetectorDist = glGetUniformLocation(dotproductShaderProgram, "detectorDist");
+    int dotdetectorPanelWidth = glGetUniformLocation(dotproductShaderProgram, "detectorPanelWidth");
+    int dotviews = glGetUniformLocation(dotproductShaderProgram, "views");
+    int dotviewNum = glGetUniformLocation(dotproductShaderProgram, "viewNum");
+    int dotnumDetectors = glGetUniformLocation(dotproductShaderProgram, "numDetectors");
+    int dotdetectorNum = glGetUniformLocation(dotproductShaderProgram, "detectorNum");
+    int renderedTargetID = glGetUniformLocation(dotproductShaderProgram, "rendered_texture");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
@@ -222,31 +226,26 @@ int main()
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    // position attribute
+    // position attribute to buffer
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+
 
     //collect timings of draw loop
     double totalTime = 0;
 
-
     // render loop
-    // -----------
     while (!glfwWindowShouldClose(window))
     {
-        // input
-        // -----
-        processInput(window);
-
         //clear screen
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        //start timer
+        //start benchmarking timer
         std::chrono::steady_clock::time_point start = std::chrono::high_resolution_clock::now();
 
         // set active shader
-        glUseProgram(shaderProgram);
+        glUseProgram(fanbeamShaderProgram);
         
         //update uniform variables
         glUniform2f(resolution, PX_RESOLUTION, PX_RESOLUTION);
@@ -259,16 +258,16 @@ int main()
         glUniform1i(detectorNum, currDetectorPixel);
 
         // Render to our framebuffer
-        glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName); //0 to write to screen, FramebufferName to write to texture
-        glViewport(0, 0, PX_RESOLUTION, PX_RESOLUTION); // Render on the whole framebuffer, complete from the lower left corner to the upper right
-        glClear(GL_COLOR_BUFFER_BIT);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName); //0 to write to screen, FramebufferName to write to whatever is in the framebuffer
+        glViewport(0, 0, PX_RESOLUTION, PX_RESOLUTION);
+        glClear(GL_COLOR_BUFFER_BIT); // clear what was originally drawn to the texture
 
-        //second shader pass
+        glDrawArrays(GL_TRIANGLES, 0, 3); //draw a triangle w/ 3 vertices to screen
 
-        // uniforms
-        glUseProgram(shaderProgram2);
+        //second shader pass, performing the dot product
+        glUseProgram(dotproductShaderProgram);
 
+        //uniforms
         glUniform1f(dotresolution, PX_RESOLUTION);
         glUniform1f(dotsourceDist, 1.5);
         glUniform1f(dotdetectorDist, 1.5);
@@ -278,25 +277,28 @@ int main()
         glUniform1i(dotnumDetectors, DETECTOR_PIXELS);
         glUniform1i(dotdetectorNum, currDetectorPixel);
 
+        // set texture used by shader to the one we just drew to in the last draw call
         glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, renderedTexture);
         glUniform1i(renderedTargetID, 0);
 
-        glBindFramebuffer(GL_FRAMEBUFFER, 0); //0 to write to screen, FramebufferName to write to texture
+        glBindFramebuffer(GL_FRAMEBUFFER, 0); //0 to write to screen, FramebufferName to write to whatever is in the framebuffer
+
         int realSreenWidth, realSreenHeight;
         glfwGetFramebufferSize(window, &realSreenWidth, &realSreenHeight); // high DPI displays may have more pixels, so get px count from screen, not program
         glViewport(0, 0, realSreenWidth, realSreenHeight); // Render on the whole framebuffer, complete from the lower left corner to the upper right
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        
+        glDrawArrays(GL_TRIANGLES, 0, 3); //draw a triangle w/ 3 vertices to screen
 
         // glfw: swap buffers 
         glfwSwapBuffers(window);
 
-        //stop timer
+        //stop benchmarking timer
         std::chrono::steady_clock::time_point end = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double, std::milli> duration = end - start;
         totalTime += duration.count();
 
-        //update CT Scanner progress
+        //update Scanning progress
         currDetectorPixel++;
         if (currDetectorPixel >= DETECTOR_PIXELS) {
             currDetectorPixel = 0;
@@ -315,8 +317,8 @@ int main()
     std::cout << "Total Time: " << totalTime << " ms" << std::endl;
     std::cout << "Avg Per Primitive: " << totalTime / (VIEWS*DETECTOR_PIXELS) << " ms" << std::endl;
 
-    // optional: de-allocate all resources once they've outlived their purpose:
-    // ------------------------------------------------------------------------
+
+    // de-allocate all resources once they've outlived their purpose:
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
 
@@ -324,21 +326,11 @@ int main()
     glDeleteFramebuffers(1, &FramebufferName);
 
     // glfw: terminate, clearing all previously allocated GLFW resources.
-    // ------------------------------------------------------------------
     glfwTerminate();
     return 0;
 }
 
-// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
-// ---------------------------------------------------------------------------------------------------------
-void processInput(GLFWwindow *window)
-{
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-}
-
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
-// ---------------------------------------------------------------------------------------------
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     // make sure the viewport matches the new window dimensions; note that width and 
