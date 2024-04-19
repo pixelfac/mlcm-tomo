@@ -1,3 +1,5 @@
+// This file is the CPU scripting equivalent of fanbeam.fs, which I created as a means of debugging fanbeam.fs
+
 #include <iostream>
 
 using namespace std;

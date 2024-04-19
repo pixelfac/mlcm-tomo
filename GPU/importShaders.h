@@ -1,3 +1,5 @@
+// helper script to simplify the process of importing shader source files
+
 #include <fstream>
 #include <iostream>
 #include <string>
