@@ -211,11 +211,7 @@ int main()
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
-    float vertices[9] =
-        {
-            1.0, 1.0, 0.0,
-            -1.0, -1.0, 0.0,
-            -1.0, 1.0, 0.0};
+    float vertices[9*DETECTOR_PIXELS];
 
     unsigned int VBO, VAO;
     glGenVertexArrays(1, &VAO);
