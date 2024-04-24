@@ -195,8 +195,6 @@ int main()
     int viewNum = glGetUniformLocation(fanbeamShaderProgram, "viewNum");
     int currView = 0;
     int numDetectors = glGetUniformLocation(fanbeamShaderProgram, "numDetectors");
-    int detectorNum = glGetUniformLocation(fanbeamShaderProgram, "detectorNum");
-    int currDetectorPixel = 0;
 
     // dot product shader
     int dotresolution = glGetUniformLocation(dotproductShaderProgram, "u_resolution");
@@ -206,7 +204,6 @@ int main()
     int dotviews = glGetUniformLocation(dotproductShaderProgram, "views");
     int dotviewNum = glGetUniformLocation(dotproductShaderProgram, "viewNum");
     int dotnumDetectors = glGetUniformLocation(dotproductShaderProgram, "numDetectors");
-    int dotdetectorNum = glGetUniformLocation(dotproductShaderProgram, "detectorNum");
     int renderedTargetID = glGetUniformLocation(dotproductShaderProgram, "rendered_texture");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
@@ -250,7 +247,6 @@ int main()
         glUniform1i(views, VIEWS);
         glUniform1i(viewNum, currView);
         glUniform1i(numDetectors, DETECTOR_PIXELS);
-        glUniform1i(detectorNum, currDetectorPixel);
 
         // Render to our framebuffer
         glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName); // 0 to write to screen, FramebufferName to write to whatever is in the framebuffer
@@ -270,7 +266,6 @@ int main()
         glUniform1i(dotviews, VIEWS);
         glUniform1i(dotviewNum, currView);
         glUniform1i(dotnumDetectors, DETECTOR_PIXELS);
-        glUniform1i(dotdetectorNum, currDetectorPixel);
 
         // set texture used by shader to the one we just drew to in the last draw call
         glActiveTexture(GL_TEXTURE0);
@@ -294,16 +289,10 @@ int main()
         totalTime += duration.count();
 
         // update Scanning progress
-        currDetectorPixel++;
-        if (currDetectorPixel >= DETECTOR_PIXELS)
+        currView++;
+        if (currView >= VIEWS)
         {
-            currDetectorPixel = 0;
-            currView++;
-
-            if (currView >= VIEWS)
-            {
-                break;
-            }
+            break;
         }
 
         // poll IO events (keys pressed/released, mouse moved etc.)
