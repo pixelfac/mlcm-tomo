@@ -9,8 +9,8 @@
 
 #define PX_RESOLUTION 512 // # of pixels for each screen dimension. keep it in powers of 2!
 
-#define VIEWS 16           // # of angles around subject that scans are taken
-#define DETECTOR_PIXELS 64 // # of discrete pixels on detector panel
+#define VIEWS 200           // # of angles around subject that scans are taken
+#define DETECTOR_PIXELS 1000 // # of discrete pixels on detector panel
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
@@ -253,7 +253,7 @@ int main()
         glViewport(0, 0, PX_RESOLUTION, PX_RESOLUTION);
         glClear(GL_COLOR_BUFFER_BIT); // clear what was originally drawn to the texture
 
-        glDrawArrays(GL_TRIANGLES, 0, 3); // draw a triangle w/ 3 vertices to screen
+        glDrawArrays(GL_TRIANGLES, 0, 3*DETECTOR_PIXELS); // draw a triangle w/ 3 vertices to screen
 
         // second shader pass, performing the dot product
         glUseProgram(dotproductShaderProgram);
@@ -278,7 +278,7 @@ int main()
         glfwGetFramebufferSize(window, &realSreenWidth, &realSreenHeight); // high DPI displays may have more pixels, so get px count from screen, not program
         glViewport(0, 0, realSreenWidth, realSreenHeight);                 // Render on the whole framebuffer, complete from the lower left corner to the upper right
 
-        glDrawArrays(GL_TRIANGLES, 0, 3); // draw a triangle w/ 3 vertices to screen
+        glDrawArrays(GL_TRIANGLES, 0, 3*DETECTOR_PIXELS); // draw a triangle w/ 3 vertices to screen
 
         // glfw: swap buffers
         glfwSwapBuffers(window);
