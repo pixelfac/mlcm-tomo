@@ -2,6 +2,10 @@
 
 This project was created by Nathan Harris as a member of team Mean Lean Coding Machine, in Spring 2024 as a part of Nathan's senior project under Professor Reza Entezari at the University of Florida
 
+# TO RUN
+
+Use the Makefile provided or compiling main.cpp and it's dependencies in a similar way, then run the output file.
+
 # File Directory
 
 ### main.cpp
